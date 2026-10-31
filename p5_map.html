@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>诗歌空间地图：从大兴城（长安）到江都</title>
+<style>
+:root{--ink:#1f1f1f;--red:#9e2b25;--gold:#b08d57;--cream:#f7f2e8;--pale:#fbf8f1;--gray:#5a5a5a;--border:#d8d0c0;--navy:#22324a;--paper:#fdfbf6;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Songti SC","SimSun","Noto Serif CJK SC",Georgia,serif;background:var(--paper);color:var(--ink);line-height:1.7;}
+.hero{background:linear-gradient(160deg,#1f1f1f 0%,#2a2a2a 55%,#3d241f 100%);color:#f7f2e8;padding:50px 6% 40px;text-align:center;}
+.hero .kicker{letter-spacing:.32em;font-size:12px;color:var(--gold);text-transform:uppercase;}
+.hero h1{font-size:28px;margin:12px 0 6px;font-family:"Heiti SC","SimHei",sans-serif;letter-spacing:.05em;}
+.hero .en{font-family:Georgia,serif;font-style:italic;color:#cbb98f;font-size:15px;}
+.hero .sub{margin-top:8px;color:#cfc6b4;font-size:13.5px;}
+.stats{display:flex;justify-content:center;gap:22px;margin-top:24px;flex-wrap:wrap;}
+.stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);padding:8px 18px;min-width:104px;}
+.stat b{display:block;font-size:21px;color:#e8c98a;font-family:Georgia;}
+.stat span{font-size:11.5px;color:#cfc6b4;letter-spacing:.1em;}
+.langbtn{position:fixed;top:12px;right:14px;z-index:200;background:var(--red);color:#fff;border:none;border-radius:18px;padding:7px 14px;font-size:13px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+.editbar{position:fixed;top:12px;right:110px;z-index:200;display:flex;gap:6px;}
+.editbar button{background:#fff;border:1px solid var(--border);border-radius:14px;padding:5px 10px;font-size:12px;cursor:pointer;color:#3a3a3a;}
+.editbar button.act{background:var(--ink);color:#fff;}
+#editMsg{position:fixed;bottom:14px;right:14px;z-index:200;background:var(--ink);color:#f7f2e8;font-size:12px;padding:6px 12px;border-radius:8px;opacity:0;transition:.2s;}
+nav{position:sticky;top:0;background:#fffdf7;border-bottom:1px solid var(--border);z-index:50;display:flex;gap:4px;padding:9px 4%;flex-wrap:wrap;justify-content:center;}
+nav a{text-decoration:none;color:var(--ink);font-size:13px;padding:6px 13px;border-radius:20px;border:1px solid transparent;}
+nav a:hover{background:var(--cream);color:var(--red);}
+section{max-width:1180px;margin:0 auto;padding:40px 4% 6px;}
+h2{font-size:21px;font-family:"Heiti SC","SimHei",sans-serif;color:var(--red);border-bottom:3px solid var(--red);display:inline-block;padding-bottom:5px;margin-bottom:8px;letter-spacing:.05em;}
+h2 .en{font-family:Georgia,serif;font-style:italic;color:var(--gray);font-size:12.5px;margin-left:10px;font-weight:normal;}
+.lead{color:var(--gray);font-size:13.5px;margin:6px 0 16px;max-width:960px;}
+.card{background:#fff;border:1px solid var(--border);border-top:3px solid var(--gold);padding:14px 16px;box-shadow:0 1px 4px rgba(31,31,31,.05);}
+footer{max-width:1180px;margin:26px auto 0;padding:20px 4% 40px;border-top:1px solid var(--border);color:var(--gray);font-size:12px;line-height:1.8;}
+.creator{margin-top:14px;padding-top:12px;border-top:1px dashed var(--border);font-size:12px;color:#3a3a3a;}
+.creator b{color:var(--red);letter-spacing:.08em;}
+.creator .en{font-family:Georgia,serif;color:var(--gray);margin-top:2px;}
+.creator .copy{margin-top:4px;color:#8c8c8c;font-size:11.5px;}
+.creator .collab{margin-top:2px;color:#8c8c8c;font-size:11.5px;}
+.creator .contact{margin-top:2px;color:#8c8c8c;font-size:11.5px;}
+svg{max-width:100%;}
+.tip{position:fixed;background:var(--ink);color:#f7f2e8;font-size:12px;padding:5px 10px;border-radius:6px;pointer-events:none;opacity:0;transition:.12s;z-index:99;}
+/* corpus */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.chip{border:1px solid var(--border);background:#fff;padding:5px 13px;border-radius:16px;cursor:pointer;font-size:12.5px;color:var(--gray);}
+.chip.on{background:var(--red);color:#fff;border-color:var(--red);}
+input.search{width:100%;max-width:420px;border:1px solid var(--border);border-radius:16px;padding:8px 14px;font-size:13.5px;margin-bottom:12px;background:#fff;}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px;}
+.pcard h3{font-size:15px;font-family:"Heiti SC",sans-serif;}
+.pcard .meta{font-size:11.5px;color:var(--gray);margin:3px 0 6px;}
+.pcard .poem{font-family:"Kaiti SC","KaiTi",serif;font-size:13.5px;background:var(--cream);padding:10px 12px;border-left:3px solid var(--red);color:#262626;margin:6px 0;}
+.more{display:block;margin:16px auto;background:var(--ink);color:#fff;border:none;border-radius:18px;padding:8px 22px;font-size:13px;cursor:pointer;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+.refs{margin-top:22px;border-top:1px solid var(--border);padding-top:12px;font-size:12.5px;color:#3a3a3a;line-height:1.8;}
+.refs h3{font-family:"Heiti SC",sans-serif;font-size:14px;color:var(--red);margin-bottom:6px;}
+.refs ol{margin-left:20px;}
+.refs li{margin-bottom:4px;}
+.refs .refnote{font-size:11.5px;color:#8c8c8c;margin-top:6px;}
+.sitem{background:#fff;border:1px solid var(--border);border-top:3px solid var(--gold);padding:10px 12px;font-size:12.5px;}
+.sitem b{display:block;}
+.sitem .u{color:#9e2b25;font-size:11px;word-break:break-all;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;}
+.swvol{background:#fff;border:1px solid var(--border);padding:8px 10px;font-size:12px;}
+.swvol b{color:#9e2b25;}
+/* tables/legend */
+.legend{display:flex;gap:14px;font-size:12px;color:var(--gray);margin-top:8px;flex-wrap:wrap;}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:4px;}
+/* map zoom */
+.mapstage{overflow:hidden;border:1px solid var(--border);background:#e9f2f7;cursor:grab;position:relative;}
+.mapstage:active{cursor:grabbing;}
+.mapzoom{transform-origin:0 0;will-change:transform;}
+.mapzoomctl{display:flex;gap:6px;align-items:center;justify-content:flex-end;margin:6px 0;}
+.mapzoomctl button{width:32px;height:30px;border:1px solid var(--border);background:#fff;border-radius:8px;font-size:16px;cursor:pointer;}
+.mapzoomctl button:hover{background:var(--cream);color:var(--red);}
+.zhint{font-size:12px;color:var(--gray);margin-right:6px;}
+.qbig .lead{font-size:15px;line-height:1.95;}
+.qbig h3{font-size:16px;}
+.qcards .card{padding:18px 20px;}
+.qcards .card p{font-size:15px;line-height:1.95;}
+.stepsbig{font-size:15px;line-height:2.0;}
+.stepsbig b{font-size:15px;}
+/* map */
+.mapbox{position:relative;}
+.mapbox svg{display:block;margin:0 auto;}
+.mapbox .panel{position:absolute;right:8px;top:8px;width:300px;max-height:560px;overflow:auto;background:#fffdf7;border:1px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,.1);padding:12px;}
+.routebox{display:flex;gap:10px;align-items:center;margin:12px 0;}
+.routebox button{background:var(--red);color:#fff;border:none;border-radius:14px;padding:6px 14px;cursor:pointer;font-size:13px;}
+.routebox button.spd{background:#fff;color:#5a5a5a;border:1px solid var(--border);padding:4px 10px;font-size:12px;}
+.routebox button.spd.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.morelink{display:inline-block;background:#9e2b25;color:#fff;text-decoration:none;font-size:12px;padding:5px 10px;border-radius:12px;margin:4px 0 8px;}
+.hit{border-bottom:1px dashed var(--border);padding:7px 0;}
+.hit .ht{font-size:12px;color:#1f1f1f;font-weight:bold;}
+.hit .hl{font-family:"Kaiti SC","KaiTi",serif;font-size:12.5px;color:#9e2b25;margin:3px 0;}
+.hit details summary{font-size:11px;color:#5a5a5a;cursor:pointer;}
+.hit .full{font-size:12px;color:#333;background:var(--cream);padding:8px;margin-top:4px;white-space:pre-wrap;}
+.dens{max-width:640px;margin:8px auto;}
+.den-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.den-row .lbl{width:130px;font-size:12.5px;text-align:right;color:#3a3a3a;}
+.den-track{flex:1;background:var(--cream);border:1px solid var(--border);height:20px;border-radius:3px;}
+.den-fill{height:100%;background:var(--red);border-radius:3px;}
+.den-n{font-size:12px;color:var(--gray);width:22px;}
+/* edit table */
+.etab{width:100%;border-collapse:collapse;font-size:12px;}
+.etab th{background:var(--ink);color:#fff;padding:5px 8px;text-align:left;}
+.etab td{border:1px solid var(--border);padding:4px 8px;vertical-align:top;}
+.etab input,.etab select{border:1px solid var(--border);font-size:12px;padding:2px 4px;width:96%;}
+.pager{display:flex;gap:8px;margin:10px 0;align-items:center;}
+.pager button{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:4px 12px;cursor:pointer;}
+</style>
+<style>.editbar{display:none!important}#edit,#editMsg{display:none!important}</style></head>
+<body>
+<button class="langbtn" id="langBtn" onclick="toggleLang()">EN</button>
+<div class="editbar">
+  <button onclick="startEdit()">✎ <span data-i="edit">编辑</span></button>
+  <button class="act" onclick="saveOverlay()">💾</button>
+  <button onclick="exportJSON()">⤓</button>
+  <button onclick="resetEdits()">↺</button>
+</div>
+<div id="editMsg"></div>
+<div class="hero">
+  <h1 data-i="h1">诗歌空间地图：从大兴城（长安）到江都</h1>
+  <div class="en">Mapping Spatial Imagery in Sui Poetry: From Daxing (Chang'an) to Jiangdu</div>
+  <div class="sub" data-i="sub"></div>
+  <div class="stats"><div class="stat"><b>23</b><span data-i="stat_places">地点</span></div><div class="stat"><b>53</b><span data-i="stat_poems">关联诗歌</span></div><div class="stat"><b>5</b><span data-i="stat_stops">路线站点</span></div><div class="stat"><b>大兴→洛阳→江都</b><span data-i="stat_km">巡幸走向</span></div></div>
+</div>
+<nav><a href="#map"><span data-i="nav_map">诗歌空间地图</span></a><a href="#route"><span data-i="nav_route">巡幸路线</span></a><a href="#density"><span data-i="nav_density">地点密度</span></a><a href="#poems"><span data-i="nav_poems">巡幸组诗</span></a><a href="#method"><span data-i="nav_method">QGIS 方法</span></a><a href="#sources"><span data-i="nav_sources">文献来源</span></a><a href="#about"><span data-i="nav_about">数据与方法</span></a></nav>
+
+<section id="map">
+ <h2><span data-i="nav_map">诗歌空间地图</span><span class="en">Poetic Spatial Map</span></h2>
+ <p class="lead" id="mapCap"></p>
+ <div class="mapctl">
+  <button class="chip on" id="btn-sui" onclick="toggleLayer('sui',this)"><span data-i="layerSui">隋疆域 610</span></button>
+  <button class="chip on" id="btn-borders" onclick="toggleLayer('borders',this)"><span data-i="layerBorders">州界</span></button>
+  <button class="chip on" id="btn-rivers" onclick="toggleLayer('rivers',this)"><span data-i="layerRivers">河流</span></button>
+  <button class="chip on" id="btn-powers" onclick="toggleLayer('powers',this)"><span data-i="layerPowers">边地政权</span></button>
+ </div>
+ <div class="mapzoomctl">
+  <span class="zhint" data-i="zoomHint">滚轮缩放 · 拖拽平移</span>
+  <button onclick="zoomBy('map',1.25)" title="Zoom in">＋</button>
+  <button onclick="zoomBy('map',0.8)" title="Zoom out">－</button>
+  <button onclick="zoomReset('map')" title="Reset">⟲</button>
+ </div>
+ <div class="mapbox">
+  <div class="mapstage" id="mapStage">
+   <div class="mapzoom" id="mapZoom">
+    <div id="mapSvg"></div>
+   </div>
+  </div>
+  <div class="panel" id="placePanel"></div>
+ </div>
+ <div class="legend" id="mapLegend"></div>
+ <p class="lead" id="mapNote" style="font-size:12px;margin-top:6px;"></p>
+</section>
+<section id="route">
+ <h2><span data-i="nav_route">巡幸路线</span><span class="en">Tour Route</span></h2>
+ <p class="lead" id="routeCap"></p>
+ <div class="routebox"><button id="playBtn" onclick="toggleRoute()">▶ <span data-i="play">播放路线</span></button>
+  <span style="font-size:12px;color:#5a5a5a;" data-i="speedLabel">速度</span>
+  <button class="spd" onclick="setSpeed(0.0025,this)"><span data-i="spdSlow">慢</span></button>
+  <button class="spd on" onclick="setSpeed(0.005,this)"><span data-i="spdMid">中</span></button>
+  <button class="spd" onclick="setSpeed(0.01,this)"><span data-i="spdFast">快</span></button>
+  <span id="routeNote" style="font-size:12.5px;color:#5a5a5a;"></span></div>
+ <p class="lead" style="font-size:12px;" data-i="routeZoomNote">地图按路线范围放大（zoom to route：107–121°E / 31–36°N），站点间距更疏；仍可滚轮缩放、拖拽平移。</p>
+ <div class="mapzoomctl">
+  <span class="zhint" data-i="zoomHint">滚轮缩放 · 拖拽平移</span>
+  <button onclick="zoomBy('route',1.25)">＋</button>
+  <button onclick="zoomBy('route',0.8)">－</button>
+  <button onclick="zoomReset('route')">⟲</button>
+ </div>
+ <div class="mapstage" id="routeStage">
+  <div class="mapzoom" id="routeZoom">
+   <div id="routeSvg"></div>
+  </div>
+ </div>
+</section>
+<section id="density">
+ <h2><span data-i="nav_density">地点密度</span><span class="en">Place Density</span></h2>
+ <p class="lead" id="denCap"></p>
+ <div class="dens" id="denBox"></div>
+</section>
+<section id="poems">
+ <h2><span data-i="nav_poems">巡幸组诗</span><span class="en">Tour Poems</span></h2>
+ <p class="lead" id="poemCap"></p>
+ <div class="cards" id="tourCards"></div>
+ <h2 style="margin-top:26px;"><span data-i="second_capital">“第二都城”细读</span></h2>
+ <div class="cards" id="capCards"></div>
+</section>
+<section id="method" class="qbig">
+ <h2><span data-i="methodTitle">QGIS：把地点变成坐标</span><span class="en">QGIS: Turning Places into Coordinates</span></h2>
+ <p class="lead" id="methodCap"></p>
+ <h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;" data-i="crsT">三个先立住的概念</h3>
+ <div class="cards qcards" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr));">
+  <div class="card"><p data-i="crs1"></p></div>
+  <div class="card"><p data-i="crs2"></p></div>
+  <div class="card"><p data-i="crs3"></p></div>
+ </div>
+ <h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;margin-top:20px;">QGIS 六步最小工作流 <span style="color:#5a5a5a;font-size:13px;">Six-step minimal workflow</span></h3>
+ <div id="wBox" class="lead stepsbig"></div>
+ <p class="lead" style="margin-top:14px;font-size:13px;">底图三档、分级符号、距离列与教程链接见下方 <a href="#about" style="color:#9e2b25;">数据与方法</a> 子条目。</p>
+</section><section id="sources">
+ <h2><span data-i="srcTitle">文献来源站点</span><span class="en">Source Sites</span></h2>
+ <p class="lead" id="srcCap"></p>
+ <div id="srcBox"></div>
+</section>
+<section id="about">
+ <h2><span data-i="aboutTitle">数据与方法</span><span class="en">Data &amp; Method</span></h2>
+ <div class="lead"><p id="about1"></p><p id="about2"></p><p id="about3"></p></div>
+ <h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;margin-top:18px;" data-i="baseT">底图三档</h3>
+ <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr));">
+  <div class="card" style="border-top-color:#b08d57;"><p data-i="base1"></p></div>
+  <div class="card" style="border-top-color:#9e2b25;"><p data-i="base2"></p></div>
+  <div class="card" style="border-top-color:#22324a;"><p data-i="base3"></p></div>
+ </div>
+ <h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;margin-top:18px;" data-i="symT">分级符号：按面积，不按直径</h3>
+ <p class="lead" id="symCap"></p>
+ <h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;margin-top:18px;" data-i="distT">距离列（球面 km）</h3>
+ <p class="lead" id="distCap"></p>
+ <div class="dens" id="distBox"></div>
+ <h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;margin-top:18px;" data-i="tutT">教程与数据源</h3>
+ <p class="lead" id="tutCap"></p>
+ <div class="sgrid" id="tutBox"></div>
+ <div class="refs"><h3>参考文献 / References</h3><ol><li>Lu Qinli 逯欽立, comp. <i>Xian Qin Han Wei Jin Nanbeichao shi</i> 先秦漢魏晉南北朝詩. Beijing: Zhonghua shuju, 1983.</li><li>Ding Fubao 丁福保, comp. <i>Quan Han Sanguo Jin Nanbeichao shi</i> 全漢三國晉南北朝詩. Shanghai: Yixue shuju, 1916.</li><li>Yan Kejun 严可均, comp. <i>Quan shanggu sandai Qin Han Sanguo Liuchao wen</i> 全上古三代秦汉三国六朝文. Beijing: Zhonghua shuju, 1958.</li><li>Wei Zheng 魏征 et al. <i>Sui shu</i> 隋书. Beijing: Zhonghua Shuju, 1973.</li><li>Tan Qixiang 谭其骧. <i>Zhongguo lishi ditu ji</i> 中国历史地图集. Beijing: Zhongguo Ditu Chubanshe, 1982.</li></ol><p class="refnote">文本、系年与地理坐标依据以上版本；网络全文与影像见上列“文献来源站点”。</p></div>
+</section>
+
+<footer>
+  <div data-i="foot1"></div>
+  <div data-i="foot2"></div>
+  <div class="creator">
+    <div><b>制作者</b>　李林壑　华盛顿大学博士生</div>
+    <div class="en">Linhe Li, PhD student at University of Washington</div>
+    <div class="copy">© 2026 制作者 · 版权所有 / All rights reserved.</div>
+    <div class="collab">协同合作：DeepSeek Harness / In collaboration with DeepSeek Harness</div>
+    <div class="contact">联络：<a href="mailto:linheli@uw.edu">linheli@uw.edu</a></div>
+    <div class="contact">网站：<a href="https://asian.washington.edu/people/linhe-li" target="_blank" rel="noopener">asian.washington.edu/people/linhe-li</a></div>
+  </div>
+</footer>
+<div class="tip" id="tip"></div>
+<script>
+
+const TXT={"zh": {"h1": "隋诗的空间意象地图", "sub": "从大兴城（长安）到江都：以《全隋诗语料表》的“空间意象／写作地点／宫廷事件”字段为基础的地点地图与炀帝巡幸路线（示意地图，非精确国界）。隋都正式名大兴城（开皇三年迁入），长安为京兆郡长安县名与文学惯称，唐改长安城。", "edit": "编辑", "savedServer": "已保存到服务器（授权用户共享）", "savedLocal": "已保存到本机（离线模式）", "enterToken": "输入编辑授权码：", "badToken": "授权码错误", "editOn": "已进入编辑模式", "editOff": "已退出编辑模式", "resetQ": "确定清空全部编辑记录？", "nav_map": "诗歌空间地图", "nav_route": "巡幸路线", "nav_density": "地点密度", "nav_poems": "巡幸组诗", "nav_about": "数据与方法", "foot1": "本页为自包含 HTML（无外部依赖），可离线打开；右上角可切换中英文。", "foot2": "数据与编辑记录由作者维护；页面可离线使用。", "stat_places": "地点", "stat_poems": "关联诗歌", "stat_stops": "路线站点", "stat_km": "巡幸走向", "mapCap": "点击地图圆点查看该地点全部相关诗句、诗题与作者；圆点大小＝关联诗歌数。", "routeCap": "大业元年起炀帝沿运河往返大兴—洛阳—江都；点击播放让巡幸路线动起来，悬停站点看诗。", "denCap": "各地点关联诗歌数（来自语料表已标注部分）。", "poemCap": "巡幸组诗选读：江都如何被写成“第二都城”。", "aboutTitle": "数据与方法", "about1": "底本：逯钦立《先秦汉魏晋南北朝诗·隋诗》（中华书局 1983）；地点与经纬度为示意坐标，古地名对应需逐条考证。", "about2": "学术对话：Bodenhamer 的 deep mapping 与曾大兴《文学地理学研究》的“文学地图”；宇文所安对都城诗的研究；陈寅恪制度史背景下的“两都”问题。", "about3": "路线：大興（長安）→ 洛陽（東都）→ 汴州／隋堤 → 淮水 → 江都（揚州）；诗题咏与巡幸行程叠加。", "panel_title": "地点诗文", "play": "播放路线", "pause": "暂停路线", "route_legend": "巡幸路线（大业）", "density": "地点密度", "second_capital": "“第二都城”细读", "edit_place": "编辑地点说明", "edit_poem": "编辑诗歌注记", "nav_method": "QGIS 方法", "nav_toolbox": "四件工具的分工", "methodTitle": "QGIS：把地点变成坐标", "methodCap": "地图不是把名字贴上去，而是把三类东西对齐：地名、坐标、几何。本页地图据此处理：坐标存 WGS84（EPSG:4326），出图示意用网络墨卡托（EPSG:3857）的等比例近似；距离一律用球面距离（km），不拿“度”的差值当距离。", "w1": "备表：UTF-8、一观测一行、列名用 ASCII（中文列名进 Stata、QGIS 都会在某个环节出问题）", "w2": "读入：带经纬度的 CSV 直接成点图层，指定 xField、yField", "w3": "定坐标系：数据是 WGS84 就写 WGS84，别默认", "w4": "叠底图：海岸线、水系、地形；涉及疆域界线的底图只本机参照，不进刊布版", "w5": "分级符号：人数这类量用面积分级，不用直径", "w6": "出版面：比例尺、图注、来源；图题与图例写在文档图注里", "crsT": "三个先立住的概念", "crs1": "坐标系（CRS）：经纬度是球面角度（度），平面坐标是摊开的地图（米）；算距离、面积先投影，这是硬规矩。", "crs2": "图层：一个图层=一张表+一套几何；每行一个地物，带属性（路名、人数、年份）。", "crs3": "投影变形：墨卡托把高纬放大，40°N 图上距离明显偏长；读数用比例尺，不用眼睛。", "baseT": "底图三档", "base1": "第一档 自然地理底图（Natural Earth 等）：今日岸线、水系、地形，免费矢量，无疆域界线——做宋代距离只能当参照", "base2": "第二档 在线历史地图（中研院 CCTS 谭图服务）：可看路—府州格局；是矢量重绘版而非原书扫描，县级以下点位指望不上", "base3": "第三档 扫描历史地形图（如民国五万分之一图）：真扫描件，村级地名、等高线、田埂都在，校核寨址、河口最管用；代价是手工拼接、统一投影", "symT": "分级符号：按面积，不按直径", "symCap": "同一数据，按直径线性放大会把 1387 人的点画成 4 人的 347 倍宽；按面积（直径取平方根）放大是 18.6 倍——人眼读的是面积，不是半径。本页地图的圆点半径 = 4 + 3.4×√篇数。", "distT": "距离列（球面 km）", "distCap": "直线球面距离（haversine，km）只作量级参照；实际驿路/运河里程更长。", "toolT": "四件工具的分工", "toolCap": "数据库是仓库，工具是加工。买库不等于会分析，装软件不等于有材料。", "toolq": "QGIS（历史地理）", "tools": "Stata（统计）", "toolg": "Gephi（网络）", "toolv": "Voyant／KH Coder（文本）", "toolq_d": "把地点变成坐标，量距离、出地图", "tools_d": "给差异配一个不确定度", "toolg_d": "把关系的结构摊成图", "toolv_d": "把成卷文字切成能数的词", "toolq_i": "带经纬度的表＋底图", "tools_i": "一观测一行的面板表", "toolg_i": "节点表＋边表", "toolv_i": "纯文本（先分词）", "toolq_o": "地图、距离列", "tools_o": "系数、边际、图", "toolg_o": "网络图、社区、中心度", "toolv_o": "词频表、共现网络", "toolq_e": "投影选错；底图用了今岸线", "tools_e": "模型与因变量的形状不匹配", "toolg_e": "边表口径：去重与方向", "toolv_e": "分词与停用词全凭自己定", "routeTotal": "大兴→江都 分段直线距离合计", "routeZoomNote": "地图按路线范围放大（zoom to route：107–121°E / 31–36°N），站点间距更疏；仍可滚轮缩放、拖拽平移。", "speedLabel": "速度", "spdSlow": "慢", "spdMid": "中", "spdFast": "快", "layerSui": "隋疆域 610", "layerBorders": "州界", "layerRivers": "河流", "layerPowers": "边地政权", "legendSui": "隋疆域（610）", "legendBorder": "州界（示意）", "legendRiver": "河流", "legendCity": "诗歌地点（点击）", "legendPower": "边地政权", "mapNote": "底图为据谭其骧《中国历史地图集》隋代（610）示意重绘，非原图扫描；疆域与州界仅作示意，不作边界依据。", "tutT": "教程与数据源", "tutCap": "QGIS 官方手册、历史地理数据与谭图参照；点开即用。", "zoomHint": "滚轮缩放 · 拖拽平移", "zoomIn": "放大", "zoomOut": "缩小", "zoomReset": "复位", "srcTitle": "文献来源站点", "srcCap": "十五个可核验的《全隋诗》网络入口；详见《全隋诗_网络来源站点全录.docx》。", "nav_sources": "文献来源", "gloss": "英文题名为译者试译。"}, "en": {"h1": "Mapping Spatial Imagery in Sui Poetry", "sub": "From Daxing (Chang'an) to Jiangdu: a place map and the emperor's tour route built on the corpus fields spatial imagery / place of composition / court events (schematic map, not exact borders). Daxing was the official Sui capital (occupied 583); Chang'an remained the county name and the literary convention, and the Tang renamed the city Chang'an.", "edit": "Edit", "savedServer": "Saved to server (shared by authorized users)", "savedLocal": "Saved to this browser (offline)", "enterToken": "Enter the edit token:", "badToken": "Wrong token", "editOn": "Edit mode ON", "editOff": "Edit mode OFF", "resetQ": "Clear all edit records?", "nav_map": "Poetic spatial map", "nav_route": "Tour route", "nav_density": "Place density", "nav_poems": "Tour poems", "nav_about": "Data & method", "foot1": "Self-contained HTML (no external dependencies); works offline. Language toggle at top right.", "foot2": "Data and edit records are maintained by the author; the page also works offline.", "stat_places": "places", "stat_poems": "linked poems", "stat_stops": "route stops", "stat_km": "route direction", "mapCap": "Click a dot to see every related line, title, and author for that place; dot size = number of linked poems.", "routeCap": "From 605 CE Emperor Yang shuttled along the canal between Daxing, Luoyang, and Jiangdu; press play to animate the route, hover stops for poems.", "denCap": "Poems linked to each place (filled portion of the corpus).", "poemCap": "Selected tour poems: how Jiangdu was written as a 'second capital.'", "aboutTitle": "Data & Method", "about1": "Base text: Lu Qinli, Sui shi (Zhonghua Shuju, 1983); coordinates are schematic, and ancient place identifications need checking.", "about2": "Conversations: Bodenhamer's deep mapping and Zeng Daxing's literary geography; Stephen Owen on capital poetry; Chen Yinke on the 'two capitals' question.", "about3": "Route: Daxing (Chang'an) → Luoyang (Eastern Capital) → Bianzhou/Sui Embankment → Huai River → Jiangdu (Yangzhou); poems overlaid on the itinerary.", "panel_title": "Poems at this place", "play": "Play route", "pause": "Pause route", "route_legend": "Tour route (Daye era)", "density": "Place density", "second_capital": "Close reading: the 'second capital'", "edit_place": "Edit place note", "edit_poem": "Edit poem note", "nav_method": "QGIS Method", "nav_toolbox": "Four Tools, Four Jobs", "methodTitle": "QGIS: Turning Places into Coordinates", "methodCap": "A map aligns three things: place names, coordinates, geometry. This page stores coordinates as WGS84 (EPSG:4326), approximates the web-mercator look for display, and computes all distances as spherical (km)—never as differences in degrees.", "w1": "Prepare the table: UTF-8, one row per observation, ASCII column names.", "w2": "Import: a CSV with lon/lat becomes a point layer (xField, yField).", "w3": "Set the CRS: if the data are WGS84, say WGS84.", "w4": "Add basemaps: coastline, rivers, terrain; boundary layers stay local.", "w5": "Graduated symbols: scale by area, not by diameter.", "w6": "Compose the layout: scale bar, legend, sources; captions go in the text.", "crsT": "Three concepts to fix first", "crs1": "CRS: lat/lon are angles on a sphere (degrees); planar coordinates are metres. To compute distance or area, project first.", "crs2": "Layers: one layer = one table + one geometry; each row is a feature with attributes.", "crs3": "Distortion: Mercator inflates high latitudes; at 40°N map distances run long. Read the scale bar, not your eye.", "baseT": "Three tiers of basemap", "base1": "Tier 1 Natural Earth: today's coastlines/rivers/relief, free vectors, no borders—reference only.", "base2": "Tier 2 online historical maps (Academia Sinica CCTS): route–prefecture scale, but redrawn vectors, not scans; no county-level detail.", "base3": "Tier 3 scanned historical topo sheets (e.g., ROC 1:50,000): real scans with village names and contour lines; best for pinning forts and fords—costly to mosaic.", "symT": "Graduated symbols: by area", "symCap": "Linear diameter scaling draws 1,387 people as 347× the width of 4; area scaling (square root of diameter) gives 18.6×—the eye reads area, not radius. On this map, radius = 4 + 3.4×√count.", "distT": "Distance column (spherical km)", "distCap": "Great-circle distances (haversine, km) as orders of magnitude only; actual post-road or canal distances are longer.", "toolT": "Four Tools, Four Jobs", "toolCap": "Databases store materials; tools process them. Buying a database is not analysis; installing software is not having materials.", "toolq": "QGIS (historical geography)", "tools": "Stata (statistics)", "toolg": "Gephi (networks)", "toolv": "Voyant / KH Coder (text)", "toolq_d": "Turn places into coordinates; measure distance; make maps", "tools_d": "Give differences an uncertainty", "toolg_d": "Spread relationships into a graph", "toolv_d": "Cut long texts into countable words", "toolq_i": "Table with lon/lat + basemap", "tools_i": "One-observation-per-row panel table", "toolg_i": "Node table + edge table", "toolv_i": "Plain text (tokenized first)", "toolq_o": "Map, distance column", "tools_o": "Coefficients, margins, plots", "toolg_o": "Network graph, communities, centrality", "toolv_o": "Word counts, co-occurrence networks", "toolq_e": "Wrong projection; basemap uses today's coastline", "tools_e": "Model shape mismatches the outcome", "toolg_e": "Edge table: dedup and direction", "toolv_e": "Segmentation and stopwords are all your call", "routeTotal": "Daxing→Jiangdu segment distances, summed", "routeZoomNote": "The route map is zoomed to the itinerary (107–121°E / 31–36°N) so stops sit farther apart; scroll to zoom and drag to pan.", "speedLabel": "Speed", "spdSlow": "Slow", "spdMid": "Mid", "spdFast": "Fast", "layerSui": "Sui territory 610", "layerBorders": "Province borders", "layerRivers": "Rivers", "layerPowers": "Border powers", "legendSui": "Sui territory (610)", "legendBorder": "Province border (schematic)", "legendRiver": "Rivers", "legendCity": "Poem places (click)", "legendPower": "Border powers", "mapNote": "The basemap is a schematic redrawing after Tan Qixiang, Historical Atlas of China (Sui, 610), not a scan; borders are indicative only.", "tutT": "Tutorials & Data", "tutCap": "QGIS manuals, historical GIS data, and Tan atlas references.", "zoomHint": "Scroll to zoom · drag to pan", "zoomIn": "Zoom in", "zoomOut": "Zoom out", "zoomReset": "Reset", "srcTitle": "Source Sites", "srcCap": "Fifteen verifiable online entries for Quan Sui shi.", "nav_sources": "Sources", "gloss": "English titles are provisional glosses."}};
+let LANG='zh';
+let EDIT=false; let OVERLAY={}; const PAGE='p5';
+function t(k){ return (TXT[LANG]&&TXT[LANG][k]!==undefined)?TXT[LANG][k]:(TXT.zh[k]||k); }
+function toggleLang(){ LANG = (LANG==='zh')?'en':'zh'; document.getElementById('langBtn').textContent=(LANG==='zh')?'EN':'中文'; renderAll(); }
+function msg(s){ const m=document.getElementById('editMsg'); m.textContent=s; m.style.opacity=1; setTimeout(()=>{m.style.opacity=0;},2200); }
+async function loadOverlay(){
+  try{ const raw=localStorage.getItem(PAGE+'overlay'); if(raw) OVERLAY=JSON.parse(raw);}catch(e){}
+  try{
+    const r=await fetch('/api/load?page='+PAGE);
+    if(r.ok){ const srv=await r.json(); OVERLAY=Object.assign({}, srv, OVERLAY); }
+  }catch(e){ /* offline: use localStorage only */ }
+  renderAll();
+}
+function saveOverlay(){
+  localStorage.setItem(PAGE+'overlay', JSON.stringify(OVERLAY));
+  fetch('/api/save?page='+PAGE,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(OVERLAY)})
+    .then(r=>{
+      if(r.status===401){ EDIT=false; renderAll(); msg(t('badToken')); return; }
+      msg(r.ok?t('savedServer'):t('savedLocal'));
+    })
+    .catch(()=>msg(t('savedLocal')));
+}
+async function startEdit(){
+  const tk=prompt(t('enterToken'));
+  if(tk===null || tk==='') return;
+  try{
+    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({password:tk})});
+    if(r.ok){ EDIT=true; renderAll(); msg(t('editOn')); }
+    else if(r.status===429){ alert('尝试次数过多，请稍后再试 / Too many attempts.'); }
+    else { alert(t('badToken')); }
+  }catch(e){ alert('编辑需通过本地服务器打开页面 / Editing requires the local server.'); }
+}
+function endEdit(){
+  EDIT=false;
+  fetch('/api/logout',{method:'POST',credentials:'same-origin'}).catch(()=>{});
+  renderAll(); msg(t('editOff'));
+}
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(OVERLAY,null,1)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=PAGE+'-edits.json'; a.click();
+}
+function resetEdits(){ if(confirm(t('resetQ'))){ OVERLAY={}; localStorage.removeItem(PAGE+'overlay'); saveOverlay(); } }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+
+const D={"places": [{"id": "changan", "zh": "大興（長安）", "en": "Daxing (Chang'an)", "ll": [108.9, 34.3], "poems": [["盧思道《從軍行》", "朔方烽火照甘泉，長安飛将出祁連。犀渠玉劍良家子，白馬金羁俠少年。 平明偃月屯右地，薄暮魚麗逐左賢。谷中石虎經銜箭，山上金"], ["薛道衡《出塞》", "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳難。"], ["楊廣《還京師詩》", "東都禮儀舉，西京冠蓋歸。是月春之季，花柳相依依。 雲跸清馳道，雕辇禦晨晖。嘹亮铙笳奏，葳蕤旌旆飛。 後乘趨文雅，前驅厲武威。"], ["元行恭《秋遊昆明池詩》", "旅客傷羁遠，樽酒慰登臨。池鲸隐舊石，岸菊聚新金。陣低雲色近，行高雁影深。欹荷瀉圓露，卧柳橫清陰。衣共秋風冷，心"], ["薛道衡《秋日遊昆明池詩》", "灞陵因靜退，靈沼暫徘徊。新船木蘭楫，舊宇豫章材。荷心宜露泫，竹徑重風來。魚潛疑刻石，沙暗似沈灰。琴逢鶴欲舞，酒"], ["虞世基《賦昆明池一物得織女石詩》", "隔河圖列宿，清漢象昭回。支機就鲸石，拂鏡取池灰。船疑海槎渡，珠似客星來。所恨雙蛾斂，逢秋遂不開。"]], "note": "西京；隋都大興，詩中“長安邸”“西京”的政治中心", "x": 571.6, "y": 391.2, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "從軍行", "en_title": "Ballad of Joining the Army", "line": "朔方烽火照甘泉，長安飛将出祁連。犀渠玉劍良家子，白馬金羁俠少年。 平明偃月屯右地，薄暮魚麗逐", "text": "朔方烽火照甘泉，長安飛将出祁連。犀渠玉劍良家子，白馬金羁俠少年。\n平明偃月屯右地，薄暮魚麗逐左賢。谷中石虎經銜箭，山上金人曾祭天。\n天涯一去無窮已，薊門迢遞三千里。朝見馬嶺黃沙合，夕望龍城陣雲起。\n庭中奇樹已堪攀，塞外征人殊未還。白雪初下天山外，浮雲直上五原間。\n關山萬里不可越，誰能坐對芳菲月。流水本自斷人腸，堅冰舊來傷馬骨。\n邊庭節物與華異，冬霰秋霜春不歇。長風蕭蕭渡水來，歸雁連連映天沒。\n從軍行，軍行萬里出龍庭，單于渭橋今已拜，将軍何處覓功名。\n*詩\n===仰贈特進陽休之詩===（七章并序）\n 夫士之在俗，所以騰聲邁實，郁爲時宗者，厥塗有三焉：才也，位也，年也。才則弘道立言，師範雅俗；位則乘軒服冕，燮代天工；年則貳膳杖朝，緻養膠序。緬尋古始，永鑒前哲，齒曆身名，鮮能俱泰，特進陽公兼而有之矣。大齊武平之五載，抗表懸車，難進之風。首振頹俗，餘不勝嘉仰，敬贈是詩。\n幽求遂古，逖聽前聞。鴻荒眇邈，篆策絪缊。\n體國經野，爲鳥爲雲。果行毓德，或武或文。\n於铄君子，含章挺秀。龍翰鳳翼，玉榮松茂。\n逸韻孤峙，奇峰回構。慕舜匪高，希顔可陋。\n藝殚文府，學究書林。盡則窮麗，索隐鈎深。\n靈珠耀手，明鏡懸心。聲偃華裔，道冠衣簪。\n豹變其文，鴻漸於陸。入作卿士，出爲嶽牧。\n千社萬鍾，玄冕丹毂。神之聽之，介以景福。\n漢稱廣德，晉美劇陽。君亦高蹈，二此鴻芳。\n知足知止，令問令望。功遂身退，休有烈光。\n聞風伯夷，懦夫自立。祖道疏傅，行人霣泣。\n公之戾止，僚友胥集。瞻彼高山，每懷靡及。\n餘實膚陋，少不及門。挾策問道，捧帚承恩。\n以茲高義，被於後昆。式歌且舞，敢贈長言。"}, {"author": "盧思道", "en_author": "Lu Sidao", "title": "聽鳴蟬篇", "en_title": "Listening to the Cicadas", "line": "路幹天不可越。 紅塵早弊陸生衣，明鏡空悲潘掾發。長安城裏帝王州，鳴鍾列鼎自相求。 西望漸台臨太液。東瞻甲觀距龍樓。說客恒持小", "text": "聽鳴蟬，此聽悲無極。群嘶玉樹裏，回噪金門側。\n長風送晚聲，清露供朝食。晚風朝露實多宜，秋日高鳴獨見知。\n輕身蔽數葉，哀鳴抱一枝。流亂罷還續，酸傷合更離。\n暫聽別人心即斷，才聞客子淚先垂。故鄉已超忽，空庭正蕪沒。\n一夕複一朝，坐見涼秋月。河流帶地從來崄，峭路幹天不可越。\n紅塵早弊陸生衣，明鏡空悲潘掾發。長安城裏帝王州，鳴鍾列鼎自相求。\n西望漸台臨太液。東瞻甲觀距龍樓。說客恒持小冠出，越使常懷寶劍遊。\n學仙未成便尚主，尋源不見已封侯。富貴功名本多豫，繁華輕薄盡無憂。\n讵念嫖姚嗟木梗，誰憶田單倦土牛。歸去來，青山下。\n秋菊離離日堪把，獨焚枯魚宴林野。終成獨校子雲書，何如還驅少遊馬。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "還京師詩", "en_title": "Returning to the Capital", "line": "東都禮儀舉，西京冠蓋歸。是月春之季，花柳相依依。 雲跸清馳道，雕辇禦晨晖。嘹亮铙笳奏，葳", "text": "東都禮儀舉，西京冠蓋歸。是月春之季，花柳相依依。\n雲跸清馳道，雕辇禦晨晖。嘹亮铙笳奏，葳蕤旌旆飛。\n後乘趨文雅，前驅厲武威。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "冬夜詩", "en_title": "Winter Night", "line": "不覺歲将盡，已複入長安。月影含冰凍，風聲凄夜寒。 江海波濤壯，崤潼坂險難。無因寄飛翼，徒欲動和", "text": "不覺歲将盡，已複入長安。月影含冰凍，風聲凄夜寒。\n江海波濤壯，崤潼坂險難。無因寄飛翼，徒欲動和銮。"}, {"author": "辛德源", "en_author": "Xin Deyuan", "title": "成連", "en_title": "Cheng Lian", "line": "城逾壞，霜落梅初寒。雪夜愁烽濕，冰朝飲馬難。寂寂長安信，誰念客衣單。", "text": "征夫從遠役，歸望絕雲端。蓑笠城逾壞，霜落梅初寒。雪夜愁烽濕，冰朝飲馬難。寂寂長安信，誰念客衣單。"}, {"author": "元行恭", "en_author": "Yuan Xinggong", "title": "秋遊昆明池詩", "en_title": "autumnvisitingKunming Pool Poem", "line": "（題）秋遊昆明池詩：旅客傷羁遠，樽酒慰登臨。池鲸隐舊石，岸菊聚新金。陣低雲色近，行高雁影深。", "text": "旅客傷羁遠，樽酒慰登臨。池鲸隐舊石，岸菊聚新金。陣低雲色近，行高雁影深。欹荷瀉圓露，卧柳橫清陰。衣共秋風冷，心學古灰沉。還似無人處，幽蘭入雅琴。"}, {"author": "何妥", "en_author": "He Tuo", "title": "長安道", "en_title": "The Road to Chang'an", "line": "長安狹斜路，縱橫四達分。車輪鳴鳳轄，箭服耀魚文。五陵多任俠，輕騎自連群。少年", "text": "長安狹斜路，縱橫四達分。車輪鳴鳳轄，箭服耀魚文。五陵多任俠，輕騎自連群。少年皆重氣，誰識故将軍。"}, {"author": "王胄", "en_author": "Wang Zhou", "title": "白馬篇", "en_title": "The White Horse", "line": "白馬黃金鞍，蹀躞柳城前。問此何鄉客，長安惡少年。結發從戎事，馳名振朔邊。良弓控繁弱，利劍揮龍泉。披林扼凋虎，仰手", "text": "白馬黃金鞍，蹀躞柳城前。問此何鄉客，長安惡少年。結發從戎事，馳名振朔邊。良弓控繁弱，利劍揮龍泉。披林扼凋虎，仰手接飛鸢。前年破沙漠，昔歲取祁連。折沖摧右校，搴旗殪左賢。昆彌還謝力，慶忌本推儇。海外平遐險，來庭識負褰。三韓勞薄伐，六事指幽燕。良家選河右，猛将征西山。浮雲屯羽騎，蔽日引長旃。自矜有餘勇，應募忽争先。王師已得隽，夷首失求全。鼓行狥玉檢，乘勝蕩朝鮮。志勇期功立，甯憚微軀捐。不羨山河賞，誰希竹素傳。"}, {"author": "王胄", "en_author": "Wang Zhou", "title": "言反江陽寓目灞涘贈易州陸司馬詩", "en_title": "Returning Past Jiangyang and Ba, Presented to Marshal Lu of Yizhou", "line": "遊人賣藥罷，徐步反江幹。行吟灞陵岸，回首望長安。晨華照城阙，參差復郁盤。千門含日麗，萬雉映霞丹。雲開承露掌，吹動相風竿", "text": "遊人賣藥罷，徐步反江幹。行吟灞陵岸，回首望長安。晨華照城阙，參差復郁盤。千門含日麗，萬雉映霞丹。雲開承露掌，吹動相風竿。遊童輕薄少，鮮服鵕鸃冠。花開傅粉晏，塵起副車韓。屢投雙飛劍，曾操兩色丸。挂玉要遊女，彈珠落矯翰。信美非吾樂，何事久盤桓。欲動南登詠，還謠北上難。眷言思舊友，徂遠路漫漫。燕陲望楚服，天際與雲端。棹發吳濤上，荊歌易水寒。十年阻風月，萬里別金蘭。心期竟何許，懷抱日摧殘。容華冉冉謝，衣帶朝朝寬。盛憲甯延壽，劉琨自少歡。宿昔均取舍，同波豈異瀾。贈言不盡意，擲筆起長歎。"}, {"author": "無名氏（諺語）", "en_author": "無名氏（諺語）", "title": "長安爲崔弘度屈突蓋語", "en_title": "Chang'an Saying on Cui Hongdu and Qutu Gai", "line": "（題）長安爲崔弘度屈突蓋語：甯飲三升醋，不見崔弘度。甯炙三斗艾，不逢屈突蓋。", "text": "甯飲三升醋，不見崔弘度。甯炙三斗艾，不逢屈突蓋。"}, {"author": "無名氏（諺語）", "en_author": "無名氏（諺語）", "title": "時人爲崔儦李若語", "en_title": "Saying of the Time on Cui Biao and Li Ruo", "line": "京師灼灼，崔儦李若。", "text": "京師灼灼，崔儦李若。"}, {"author": "許善心", "en_author": "Xu Shanxin", "title": "奉和還京師詩", "en_title": "In Response to 'Returning to the Capital'", "line": "（題）奉和還京師詩：重光闡帝圖，肆觐荷來蘇。卜洛連新邑，因秦還舊都。雷警三辰衛，星陳七萃驅。", "text": "重光闡帝圖，肆觐荷來蘇。卜洛連新邑，因秦還舊都。雷警三辰衛，星陳七萃驅。從風折鳳羽，曜日拖魚\n 須。憲章殚禮樂，容服備車徒。回銮入豐鎬，從跸度枌榆。冉冉年和變，遲遲節物徂。餘花照玉李，細葉翦圭梧。朝夕萬國湊，海會百川輸。微生逢大造，倏忽改榮枯。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "四時白纻歌二首·長安秋", "en_title": "White Ramie Songs of the Four Seasons · Chang'an in Autumn", "line": "（題）四時白纻歌二首·長安秋：露寒台前曉露清，昆明池水秋色明。搖環動佩出層城，鹍弦鳳管奏新聲。上林蒲桃", "text": "露寒台前曉露清，昆明池水秋色明。搖環動佩出層城，鹍弦鳳管奏新聲。上林蒲桃合缥缈，甘泉奇樹上蔥青。玉人當歌理清曲，婕妤恩情斷還續。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "秋日贈王中舍詩", "en_title": "autumndaypresented toWang Zhongsheng Poem", "line": "流寓。鞏洛重行行，寓目盡傷情。太行臨北绛，函谷拒西京。雀書圖久滅，龍文鼎遂輕。淩雲餘構盡，濛汜曲池傾。徘徊殊未極，惆怅空雲纓", "text": "秦關望吳苑，渭涘去江汶。天漢星躔絕，山川地角分。百年變朝市，千里異風雲。雙鴛難可贈，別鶴不相聞。忽值從遊士，玳簪光素履。歡言悅鄭郊，雪泣悲燕市。契闊論談笑，殷勤訪生死。思君在一方，無由同四美。尺素乃雲披，投瓊慰久離。雲開缛錦散，霞照綠缇披。相思歎河廣，相望阻天垂。贈言方杜若，握手代萱枝。伊昔風期早，金蘭信爲寶。去來金馬門，留連鬥雞道。鹫嶺訪三禅，商山追四皓。勝地俱遊息，披文遞論讨。虛薄忝官聯，喬木遂同遷。濯纓升博望，闊步入祟賢。高軒照流水，長劍聳秋蓮。南風忽不競，東海遂成田。喧喧狹斜路，隐隐平陵樹。鳳阙暧西臨，星橋耿南注。五方多異俗，四海皆行路。士衡嗟苦辛，德琏傷流寓。鞏洛重行行，寓目盡傷情。太行臨北绛，函谷拒西京。雀書圖久滅，龍文鼎遂輕。淩雲餘構盡，濛汜曲池傾。徘徊殊未極，惆怅空雲纓。伊川忽會面，留連展言宴。東西一背飛，翻然成異縣。哀哉人道促，痛矣嗟埋玉。嵇生顧影琴，裴子飄風燭。摧茲激水意，頓此浮雲足。棄置勿重陳，難終唯此曲。漢陽趙元淑，薛縣雍門周。清文甯解病，妙曲反增愁。翳翳神逾伏，懔懔歲方遒。雙崤飛暗雨，八水凍寒流。蘭枯芳草歇，槐古憶前秋。江幹不可望，徒此歎離憂。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "賦昆明池一物得織女石詩", "en_title": "On an Object of Kunming Pool: the Weaving Girl's Stone", "line": "（題）賦昆明池一物得織女石詩：隔河圖列宿，清漢象昭回。支機就鲸石，拂鏡取池灰。船疑海槎渡，珠似客星來。", "text": "隔河圖列宿，清漢象昭回。支機就鲸石，拂鏡取池灰。船疑海槎渡，珠似客星來。所恨雙蛾斂，逢秋遂不開。"}, {"author": "楊素", "en_author": "Yang Su", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "嘶朔馬，胡霜切塞鴻。休明大道暨，幽荒日用同。方就長安邸，來谒建章宮。  漢虜未和親，憂國不憂身。握手河梁上，窮涯北海濱。據鞍", "text": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮。兵寝星芒落，戰解月輪空。嚴鐎息夜鬥，骍角罷鳴弓。北風嘶朔馬，胡霜切塞鴻。休明大道暨，幽荒日用同。方就長安邸，來谒建章宮。\n 漢虜未和親，憂國不憂身。握手河梁上，窮涯北海濱。據鞍獨懷古，慷慨感良臣。曆覽多舊迹，風日慘愁人。荒塞空千里，孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮邊聲起，空飛胡騎塵。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾", "text": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳難。從軍多惡少，召募盡材官。伏堤時卧鼓，疑兵乍解鞍。柳城擒冒頓，長坂納呼韓。受降今更築，燕然已重刊。還嗤傅介子，辛苦刺樓蘭。\n 邊庭烽火驚，插羽夜徵兵。少昊騰金氣，文昌動将星。長驅鞮汗北，直指夫人城。絕漠三秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙，鈎鲲臨北溟。當知霍骠騎，高第起西京。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "昭君辭", "en_title": "Zhaojun, a Lyric", "line": "改真形。專由妾命薄，誤使君恩輕。啼沾渭橋路，歎別長安城。夜依寒草宿，朝逐轉蓬征。卻望關山迥，前瞻沙漠平。胡風帶秋月，嘶馬雜笳", "text": "我本良家子，充選入椒庭。不蒙女史進，更失畫師情。蛾眉非本質，蟬鬓改真形。專由妾命薄，誤使君恩輕。啼沾渭橋路，歎別長安城。夜依寒草宿，朝逐轉蓬征。卻望關山迥，前瞻沙漠平。胡風帶秋月，嘶馬雜笳聲。毛裘易羅绮，氈帳代金屏。自知蓮臉歇，羞看菱鏡明。钗落終應棄，髻解不須萦。何用單于重，讵假阏氏名。駃騠聊強食，筒酒未能傾。心随故鄉斷，愁逐塞雲生。漢宮如有憶，爲視旄頭星。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "秋日遊昆明池詩", "en_title": "autumndayvisitingKunming Pool Poem", "line": "（題）秋日遊昆明池詩：灞陵因靜退，靈沼暫徘徊。新船木蘭楫，舊宇豫章材。荷心宜露泫，竹徑重風來。", "text": "灞陵因靜退，靈沼暫徘徊。新船木蘭楫，舊宇豫章材。荷心宜露泫，竹徑重風來。魚潛疑刻石，沙暗似沈灰。琴逢鶴欲舞，酒遇菊花開。羁心與秋興，陶然寄一杯。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "歲窮應教詩", "en_title": "Year's End, on Instruction", "line": "故年随夜盡，初春逐曉生。方驗從軍樂，飲至入西京。", "text": "故年随夜盡，初春逐曉生。方驗從軍樂，飲至入西京。"}], "prose_count": 32}, {"id": "luoyang", "zh": "洛陽／東都", "en": "Luoyang / Eastern Capital", "ll": [112.5, 34.6], "poems": [["楊廣《還京師詩》", "東都禮儀舉，西京冠蓋歸。"], ["楊廣《正月十五日于通衢建燈夜升南樓詩》", "燈樹千光照，花焰七枝開。"]], "note": "大業元年營建東都，巡幸路線的中轉與新都", "x": 658.0, "y": 384.2, "hits": [{"author": "秦玉鸾", "en_author": "秦玉鸾", "title": "憶情人詩", "en_title": "Remembering My Love", "line": "蘭幕蟲聲切，椒庭月影斜。可憐秦館女，不及洛陽花。", "text": "蘭幕蟲聲切，椒庭月影斜。可憐秦館女，不及洛陽花。"}, {"author": "張碧蘭", "en_author": "Zhang Bilan", "title": "寄阮郎詩", "en_title": "Sent to Ruan Lang", "line": "郎如洛陽花，妾似武昌柳。兩地惜春風，何時一攜手。", "text": "郎如洛陽花，妾似武昌柳。兩地惜春風，何時一攜手。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "四時白纻歌二首·東宮春", "en_title": "White Ramie Songs of the Four Seasons · East Palace in Spring", "line": "洛陽城邊朝日晖，天淵池前春燕歸。含露桃花開未飛，臨風楊柳自依依。 小苑花紅洛", "text": "洛陽城邊朝日晖，天淵池前春燕歸。含露桃花開未飛，臨風楊柳自依依。\n小苑花紅洛水綠，清歌宛轉繁弦促。長袖逶迤動珠玉，千年萬歲陽春曲。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "冬至乾陽殿受朝詩", "en_title": "Receiving Homage in the Qianyang Hall at Winter Solstice", "line": "王。 至德慚日用，治道愧時康。新邑建嵩嶽，雙阙臨洛陽。 圭景正八表，道路均四方。碧空霜華淨，朱庭皎日光。 纓佩既濟濟，鍾鼓何", "text": "北陸玄冬盛，南至晷漏長。端拱朝萬國，守文繼百王。\n至德慚日用，治道愧時康。新邑建嵩嶽，雙阙臨洛陽。\n圭景正八表，道路均四方。碧空霜華淨，朱庭皎日光。\n纓佩既濟濟，鍾鼓何锽锽。文戟翊高殿，采眊分修廊。\n元首乏明哲，股肱貴惟良。舟楫行有寄，庶此王化昌。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "還京師詩", "en_title": "Returning to the Capital", "line": "東都禮儀舉，西京冠蓋歸。是月春之季，花柳相依依。 雲跸清馳道，雕辇禦晨晖。嘹", "text": "東都禮儀舉，西京冠蓋歸。是月春之季，花柳相依依。\n雲跸清馳道，雕辇禦晨晖。嘹亮铙笳奏，葳蕤旌旆飛。\n後乘趨文雅，前驅厲武威。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "晚春詩", "en_title": "Late Spring", "line": "洛陽春稍晚，四望滿春晖。楊葉行将暗，桃花落未稀。 窺檐燕争入，穿林鳥亂飛。唯", "text": "洛陽春稍晚，四望滿春晖。楊葉行将暗，桃花落未稀。\n窺檐燕争入，穿林鳥亂飛。唯當關塞者，溽露方沾衣。"}, {"author": "無名氏（雜曲歌辭）", "en_author": "無名氏（雜曲歌辭）", "title": "祠洛水歌", "en_title": "Song of Sacrifice to the Luo River", "line": "洛陽之水，其色蒼蒼。祠祭大澤，倏忽南臨。洛濱醊禱，色連三光。", "text": "洛陽之水，其色蒼蒼。祠祭大澤，倏忽南臨。洛濱醊禱，色連三光。"}, {"author": "庾自直", "en_author": "Yu Zizhi", "title": "初發東都應诏詩", "en_title": "Setting Out from the Eastern Capital, by Imperial Command", "line": "（題）初發東都應诏詩：二龍承玉軸，萬騎翊林塘。縱觀此何事，巡駕幸淮揚。伊雒山川轉，江河道路長。", "text": "二龍承玉軸，萬騎翊林塘。縱觀此何事，巡駕幸淮揚。伊雒山川轉，江河道路長。照日秋原淨，分花曲水香。稻粱叨歲月，羽翮仰恩光。後塵歸舊裏，還如仙鶴翔。"}, {"author": "孔德紹", "en_author": "Kong Deshao", "title": "行經太華詩", "en_title": "Passing by Mount Hua", "line": "五里霧，日落二華陰。疏峰起蓮葉，危塞隐桃林。何必東都外，此處可抽簪。", "text": "紛吾世網暇，靈嶽展幽尋。寥廓風塵遠，杳冥川谷深。山昏五里霧，日落二華陰。疏峰起蓮葉，危塞隐桃林。何必東都外，此處可抽簪。"}], "prose_count": 17}, {"id": "bingzhou", "zh": "并州／晉陽", "en": "Bingzhou / Jinyang", "ll": [112.6, 37.9], "poems": [["薛道衡《從駕幸晉陽詩》", "省方遵往冊，遊豫葉前經。金吾朝戒道，校尉晚巡營。重巒下飛騎，絕浦渡連旌。澗水寒逾咽，松風遠更清。方觀翠華反，簪筆上雲亭。"], ["虞世基《奉和幸太原辇上作應詔詩》", "唐巡光帝則，夏務穆宸儀。"]], "note": "北巡行在所，奉和應詔詩的發生地", "x": 660.4, "y": 306.8, "hits": [{"author": "楊堅（隋文帝）", "en_author": "Emperor Wen of Sui (Yang Jian)", "title": "宴秦孝王于并州作詩", "en_title": "Banquet for Prince Qinxiao at Bingzhou", "line": "（題）宴秦孝王于并州作詩：紅顔讵幾，玉貌須臾。一朝花落，白發難除。明年後歲，誰有誰無。", "text": "紅顔讵幾，玉貌須臾。一朝花落，白發難除。明年後歲，誰有誰無。"}, {"author": "無名氏（先聖先師歌）", "en_author": "無名氏（先聖先師歌）", "title": "太廟樂歌九首·皇高祖太原府君神室歌", "en_title": "Ancestral Temple Songs · Shrine of the Taiyuan Lord, the High Ancestor", "line": "（題）太廟樂歌九首·皇高祖太原府君神室歌：締基發祥，肇源興慶。乃仁乃哲，克明克令。庸宣國圖，善流人詠。開我皇業，七", "text": "締基發祥，肇源興慶。乃仁乃哲，克明克令。庸宣國圖，善流人詠。開我皇業，七百同盛。"}, {"author": "無名氏（謠辭）", "en_author": "無名氏（謠辭）", "title": "炀帝時并州童謠", "en_title": "Bingzhou Children's Rhyme of Emperor Yang's Time", "line": "（題）炀帝時并州童謠：一張紙，兩張紙，客量小兒作天子。", "text": "一張紙，兩張紙，客量小兒作天子。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "奉和幸太原辇上作應诏詩", "en_title": "In Response to 'Composed on the Imperial Carriage at Taiyuan,' by Imperial Command", "line": "（題）奉和幸太原辇上作應诏詩：唐巡光帝則，夏務穆宸儀。珠旗揚翼鳳，玉獸俨丹螭。流吹和春鳥，交弄拂花枝。", "text": "唐巡光帝則，夏務穆宸儀。珠旗揚翼鳳，玉獸俨丹螭。流吹和春鳥，交弄拂花枝。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "從駕幸晉陽詩", "en_title": "Accompanying the Imperial Visit to Jinyang", "line": "（題）從駕幸晉陽詩：省方遵往冊，遊豫葉前經。金吾朝戒道，校尉晚巡營。重巒下飛騎，絕浦渡連旌。", "text": "省方遵往冊，遊豫葉前經。金吾朝戒道，校尉晚巡營。重巒下飛騎，絕浦渡連旌。澗水寒逾咽，松風遠更清。方觀翠華反，簪筆上雲亭。"}], "prose_count": 15}, {"id": "saiwai", "zh": "塞外", "en": "Beyond the Pass", "ll": [111.5, 41.2], "poems": [["楊素《出塞》", "漠南胡未空，漢將復臨戎。"], ["薛道衡《出塞》", "高秋白露團，上將出長安。"], ["虞世基《出塞》", "誓將絕沙漠，悠然去玉門。"], ["盧思道《從軍行》", "朔方烽火照甘泉，長安飛將出祁連。"]], "note": "邊塞詩的中心空間；隋作把征戰終點寫回朝廷", "x": 634.0, "y": 229.4, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "從軍行", "en_title": "Ballad of Joining the Army", "line": "見馬嶺黃沙合，夕望龍城陣雲起。 庭中奇樹已堪攀，塞外征人殊未還。白雪初下天山外，浮雲直上五原間。 關山萬里不可越，誰能坐對芳", "text": "朔方烽火照甘泉，長安飛将出祁連。犀渠玉劍良家子，白馬金羁俠少年。\n平明偃月屯右地，薄暮魚麗逐左賢。谷中石虎經銜箭，山上金人曾祭天。\n天涯一去無窮已，薊門迢遞三千里。朝見馬嶺黃沙合，夕望龍城陣雲起。\n庭中奇樹已堪攀，塞外征人殊未還。白雪初下天山外，浮雲直上五原間。\n關山萬里不可越，誰能坐對芳菲月。流水本自斷人腸，堅冰舊來傷馬骨。\n邊庭節物與華異，冬霰秋霜春不歇。長風蕭蕭渡水來，歸雁連連映天沒。\n從軍行，軍行萬里出龍庭，單于渭橋今已拜，将軍何處覓功名。\n*詩\n===仰贈特進陽休之詩===（七章并序）\n 夫士之在俗，所以騰聲邁實，郁爲時宗者，厥塗有三焉：才也，位也，年也。才則弘道立言，師範雅俗；位則乘軒服冕，燮代天工；年則貳膳杖朝，緻養膠序。緬尋古始，永鑒前哲，齒曆身名，鮮能俱泰，特進陽公兼而有之矣。大齊武平之五載，抗表懸車，難進之風。首振頹俗，餘不勝嘉仰，敬贈是詩。\n幽求遂古，逖聽前聞。鴻荒眇邈，篆策絪缊。\n體國經野，爲鳥爲雲。果行毓德，或武或文。\n於铄君子，含章挺秀。龍翰鳳翼，玉榮松茂。\n逸韻孤峙，奇峰回構。慕舜匪高，希顔可陋。\n藝殚文府，學究書林。盡則窮麗，索隐鈎深。\n靈珠耀手，明鏡懸心。聲偃華裔，道冠衣簪。\n豹變其文，鴻漸於陸。入作卿士，出爲嶽牧。\n千社萬鍾，玄冕丹毂。神之聽之，介以景福。\n漢稱廣德，晉美劇陽。君亦高蹈，二此鴻芳。\n知足知止，令問令望。功遂身退，休有烈光。\n聞風伯夷，懦夫自立。祖道疏傅，行人霣泣。\n公之戾止，僚友胥集。瞻彼高山，每懷靡及。\n餘實膚陋，少不及門。挾策問道，捧帚承恩。\n以茲高義，被於後昆。式歌且舞，敢贈長言。"}, {"author": "王由禮", "en_author": "Wang Youli", "title": "骢馬", "en_title": "The Piebald Horse", "line": "善馬金羁飾，蹑影複淩空。影入長城水，聲随胡地風。鞚斂青門外，珂喧紫陌中。行行苦不倦，唯當禦史骢。", "text": "善馬金羁飾，蹑影複淩空。影入長城水，聲随胡地風。鞚斂青門外，珂喧紫陌中。行行苦不倦，唯當禦史骢。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "飲馬長城窟行", "en_title": "Watering Horses at a Long Wall Spring", "line": "行陣，鳴鼓興士卒。 千乘萬騎動，飲馬長城窟。秋昏塞外雲，霧暗關山月。 緣嚴驿馬上，乘空烽火發。借問長城候，單于入朝谒。 濁氣", "text": "肅肅秋風起，悠悠行萬里。萬里何所行，橫漠築長城。\n豈台小子智，先聖之所營。樹茲萬世策，安此憶兆生。\n讵敢憚焦思，高枕於上京。北河秉武節，千里卷戎旌。\n山川互出沒，原野窮超忽。摐金止行陣，鳴鼓興士卒。\n千乘萬騎動，飲馬長城窟。秋昏塞外雲，霧暗關山月。\n緣嚴驿馬上，乘空烽火發。借問長城候，單于入朝谒。\n濁氣靜天山，晨光照高阙。釋兵仍振旅，要荒事方舉。\n飲至告言旋，功歸清廟前。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "錦石搗流黃二首", "en_title": "Beating Cloth at Brocade Rock, Two Poems", "line": "燕然，愁閨夜不眠。易制殘燈下，鳴砧秋月前。 今夜長城下，雲昏月應暗。誰見倡樓前，心悲不成慘。", "text": "漢使出燕然，愁閨夜不眠。易制殘燈下，鳴砧秋月前。\n今夜長城下，雲昏月應暗。誰見倡樓前，心悲不成慘。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "雲中受突厥主朝宴席賦詩", "en_title": "Composed at the Banquet for the Tujue Qaghan at Yunzhong", "line": "鹿塞鴻旗駐，龍庭翠輦回， 氈帳望風舉，穹廬向日開。 呼韓頓顙至，屠耆接踵來。 索辮擎{}", "text": "鹿塞鴻旗駐，龍庭翠輦回，\n氈帳望風舉，穹廬向日開。\n呼韓頓顙至，屠耆接踵來。\n索辮擎{}肉，韋{}獻酒杯。\n何如漢天子，空上單于臺？"}, {"author": "王胄", "en_author": "Wang Zhou", "title": "白馬篇", "en_title": "The White Horse", "line": "繁弱，利劍揮龍泉。披林扼凋虎，仰手接飛鸢。前年破沙漠，昔歲取祁連。折沖摧右校，搴旗殪左賢。昆彌還謝力，慶忌本推儇。海外平遐險", "text": "白馬黃金鞍，蹀躞柳城前。問此何鄉客，長安惡少年。結發從戎事，馳名振朔邊。良弓控繁弱，利劍揮龍泉。披林扼凋虎，仰手接飛鸢。前年破沙漠，昔歲取祁連。折沖摧右校，搴旗殪左賢。昆彌還謝力，慶忌本推儇。海外平遐險，來庭識負褰。三韓勞薄伐，六事指幽燕。良家選河右，猛将征西山。浮雲屯羽騎，蔽日引長旃。自矜有餘勇，應募忽争先。王師已得隽，夷首失求全。鼓行狥玉檢，乘勝蕩朝鮮。志勇期功立，甯憚微軀捐。不羨山河賞，誰希竹素傳。"}, {"author": "無名氏（雜曲歌辭）", "en_author": "無名氏（雜曲歌辭）", "title": "摩多樓子", "en_title": "The Moduo Lad", "line": "從戎向邊北，遠行醉密親。借問陰山候，還知塞上人。", "text": "從戎向邊北，遠行醉密親。借問陰山候，還知塞上人。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "窮秋塞莫腓，塞外胡塵飛。徵兵廣武至，候騎陰山歸。廟堂千里策，将軍百戰威。轅門臨玉帳，大旆", "text": "窮秋塞莫腓，塞外胡塵飛。徵兵廣武至，候騎陰山歸。廟堂千里策，将軍百戰威。轅門臨玉帳，大旆指金微。摧朽無勍敵，應變有先機。銜枚壓曉陣，卷甲解朝圍。瀚海波瀾靜，王庭氛霧晞。鼓鼙嚴朔氣，原野曀寒晖。勳庸震邊服，歌吹入京畿。待拜長平坂，鳴驺入禮闱。\n 上将三略遠，元戎九命尊。緬懷古人節，思酬明主恩。山西多勇氣，塞北有遊魂。揚桴度隴坂，勒騎上平原。誓将絕沙漠，悠然去玉門。輕赍不遑舍，驚策骛戎軒。懔懔邊風急，蕭蕭征馬煩。雪暗天山道，冰塞交河源。霧烽黯無色，霜旗凍不翻。耿介倚長劍，日落風塵昏。"}, {"author": "楊素", "en_author": "Yang Su", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮邊聲起，空飛", "text": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮。兵寝星芒落，戰解月輪空。嚴鐎息夜鬥，骍角罷鳴弓。北風嘶朔馬，胡霜切塞鴻。休明大道暨，幽荒日用同。方就長安邸，來谒建章宮。\n 漢虜未和親，憂國不憂身。握手河梁上，窮涯北海濱。據鞍獨懷古，慷慨感良臣。曆覽多舊迹，風日慘愁人。荒塞空千里，孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮邊聲起，空飛胡騎塵。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙，鈎鲲臨北溟", "text": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳難。從軍多惡少，召募盡材官。伏堤時卧鼓，疑兵乍解鞍。柳城擒冒頓，長坂納呼韓。受降今更築，燕然已重刊。還嗤傅介子，辛苦刺樓蘭。\n 邊庭烽火驚，插羽夜徵兵。少昊騰金氣，文昌動将星。長驅鞮汗北，直指夫人城。絕漠三秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙，鈎鲲臨北溟。當知霍骠騎，高第起西京。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "昭君辭", "en_title": "Zhaojun, a Lyric", "line": "長安城。夜依寒草宿，朝逐轉蓬征。卻望關山迥，前瞻沙漠平。胡風帶秋月，嘶馬雜笳聲。毛裘易羅绮，氈帳代金屏。自知蓮臉歇，羞看菱鏡", "text": "我本良家子，充選入椒庭。不蒙女史進，更失畫師情。蛾眉非本質，蟬鬓改真形。專由妾命薄，誤使君恩輕。啼沾渭橋路，歎別長安城。夜依寒草宿，朝逐轉蓬征。卻望關山迥，前瞻沙漠平。胡風帶秋月，嘶馬雜笳聲。毛裘易羅绮，氈帳代金屏。自知蓮臉歇，羞看菱鏡明。钗落終應棄，髻解不須萦。何用單于重，讵假阏氏名。駃騠聊強食，筒酒未能傾。心随故鄉斷，愁逐塞雲生。漢宮如有憶，爲視旄頭星。"}], "prose_count": 14}, {"id": "tujue", "zh": "突厥／漠北", "en": "Tujue / Northern Steppe", "ll": [104.0, 46.0], "poems": [["楊廣《雲中受突厥主朝宴席賦詩》", "氈帳望風舉，穹廬向日開。"], ["大義公主《書屏風詩》", "盛衰等朝露，世道若浮萍。榮華實難守，池台終自平。富貴今何在，空事寫丹青。杯酒恒無樂，弦歌讵有聲。餘本"], ["大義公主《書屏風詩》", "盛衰等朝露，世道若浮萍。榮華實難守，池台終自平。富貴今何在，空事寫丹青。杯酒恒無樂，弦歌讵有聲。餘本"]], "note": "和親與北巡外交的舞台", "x": 454.0, "y": 116.9, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "從軍行", "en_title": "Ballad of Joining the Army", "line": "蕭蕭渡水來，歸雁連連映天沒。 從軍行，軍行萬里出龍庭，單于渭橋今已拜，将軍何處覓功名。 *詩 ===仰贈特進陽休之詩===（", "text": "朔方烽火照甘泉，長安飛将出祁連。犀渠玉劍良家子，白馬金羁俠少年。\n平明偃月屯右地，薄暮魚麗逐左賢。谷中石虎經銜箭，山上金人曾祭天。\n天涯一去無窮已，薊門迢遞三千里。朝見馬嶺黃沙合，夕望龍城陣雲起。\n庭中奇樹已堪攀，塞外征人殊未還。白雪初下天山外，浮雲直上五原間。\n關山萬里不可越，誰能坐對芳菲月。流水本自斷人腸，堅冰舊來傷馬骨。\n邊庭節物與華異，冬霰秋霜春不歇。長風蕭蕭渡水來，歸雁連連映天沒。\n從軍行，軍行萬里出龍庭，單于渭橋今已拜，将軍何處覓功名。\n*詩\n===仰贈特進陽休之詩===（七章并序）\n 夫士之在俗，所以騰聲邁實，郁爲時宗者，厥塗有三焉：才也，位也，年也。才則弘道立言，師範雅俗；位則乘軒服冕，燮代天工；年則貳膳杖朝，緻養膠序。緬尋古始，永鑒前哲，齒曆身名，鮮能俱泰，特進陽公兼而有之矣。大齊武平之五載，抗表懸車，難進之風。首振頹俗，餘不勝嘉仰，敬贈是詩。\n幽求遂古，逖聽前聞。鴻荒眇邈，篆策絪缊。\n體國經野，爲鳥爲雲。果行毓德，或武或文。\n於铄君子，含章挺秀。龍翰鳳翼，玉榮松茂。\n逸韻孤峙，奇峰回構。慕舜匪高，希顔可陋。\n藝殚文府，學究書林。盡則窮麗，索隐鈎深。\n靈珠耀手，明鏡懸心。聲偃華裔，道冠衣簪。\n豹變其文，鴻漸於陸。入作卿士，出爲嶽牧。\n千社萬鍾，玄冕丹毂。神之聽之，介以景福。\n漢稱廣德，晉美劇陽。君亦高蹈，二此鴻芳。\n知足知止，令問令望。功遂身退，休有烈光。\n聞風伯夷，懦夫自立。祖道疏傅，行人霣泣。\n公之戾止，僚友胥集。瞻彼高山，每懷靡及。\n餘實膚陋，少不及門。挾策問道，捧帚承恩。\n以茲高義，被於後昆。式歌且舞，敢贈長言。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "雲中受突厥主朝宴席賦詩", "en_title": "Composed at the Banquet for the Tujue Qaghan at Yunzhong", "line": "（題）雲中受突厥主朝宴席賦詩：鹿塞鴻旗駐，龍庭翠輦回， 氈帳望風舉，穹廬向日開。 呼韓頓顙至，屠耆接踵", "text": "鹿塞鴻旗駐，龍庭翠輦回，\n氈帳望風舉，穹廬向日開。\n呼韓頓顙至，屠耆接踵來。\n索辮擎{}肉，韋{}獻酒杯。\n何如漢天子，空上單于臺？"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙", "text": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳難。從軍多惡少，召募盡材官。伏堤時卧鼓，疑兵乍解鞍。柳城擒冒頓，長坂納呼韓。受降今更築，燕然已重刊。還嗤傅介子，辛苦刺樓蘭。\n 邊庭烽火驚，插羽夜徵兵。少昊騰金氣，文昌動将星。長驅鞮汗北，直指夫人城。絕漠三秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙，鈎鲲臨北溟。當知霍骠騎，高第起西京。"}], "prose_count": 17}, {"id": "yumen", "zh": "玉門", "en": "Yumen", "ll": [97.0, 39.5], "poems": [["虞世基《出塞》", "誓將絕沙漠，悠然去玉門。"]], "note": "邊塞詩的遠端標記", "x": 286.0, "y": 269.3, "hits": [{"author": "虞世基", "en_author": "Yu Shiji", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "遊魂。揚桴度隴坂，勒騎上平原。誓将絕沙漠，悠然去玉門。輕赍不遑舍，驚策骛戎軒。懔懔邊風急，蕭蕭征馬煩。雪暗天山道，冰塞交河源", "text": "窮秋塞莫腓，塞外胡塵飛。徵兵廣武至，候騎陰山歸。廟堂千里策，将軍百戰威。轅門臨玉帳，大旆指金微。摧朽無勍敵，應變有先機。銜枚壓曉陣，卷甲解朝圍。瀚海波瀾靜，王庭氛霧晞。鼓鼙嚴朔氣，原野曀寒晖。勳庸震邊服，歌吹入京畿。待拜長平坂，鳴驺入禮闱。\n 上将三略遠，元戎九命尊。緬懷古人節，思酬明主恩。山西多勇氣，塞北有遊魂。揚桴度隴坂，勒騎上平原。誓将絕沙漠，悠然去玉門。輕赍不遑舍，驚策骛戎軒。懔懔邊風急，蕭蕭征馬煩。雪暗天山道，冰塞交河源。霧烽黯無色，霜旗凍不翻。耿介倚長劍，日落風塵昏。"}], "prose_count": 0}, {"id": "youzhou", "zh": "幽州／涿郡", "en": "Youzhou / Zhuojun", "ll": [116.3, 39.9], "poems": [["楊廣《紀遼東二首》", "遼東海北翦長鯨，風雲萬里清。"]], "note": "征遼集結地與運河北端", "x": 749.2, "y": 259.9, "hits": [{"author": "徐儀", "en_author": "Xu Yi", "title": "暮秋望月示學士各釋愁應教", "en_title": "Late Autumn Moon-Gazing, for the Academicians to Dispel Their Sorrows, on Instruction", "line": "碣石寒光遠，□□秋色高。長沙正下葉，曲岸已飛濤。君王怅晚節，延伫謁神臯。復屬", "text": "碣石寒光遠，□□秋色高。長沙正下葉，曲岸已飛濤。君王怅晚節，延伫謁神臯。復屬西園夜，輕辇暫遊遨。遊遨未雲賞，蒼茫孤月上。枝間影合離，波上光來往。此夕未央宮，應照仙人掌。掌高明轉淨，夜深留睿想。處處敞高扃，流照滿珠庭。重輪入雅曲，合璧應祥經。燦爛浮珠網，參差間玉星。山幽有芳桂，林靜發新蓂。蓂開布帝城，分枝共月明。斜晖漸西落，彌□轸歸情。骖駕且來遊，聖藻命舒愁。詢刍以蠲病，參妙本難酬。良史稱夭闳，因時命應劉。楚王追綠兕，齊後出青丘。馳原落雲翼，截水曳吞舟。無勞子虛咤，即事可忘憂。"}, {"author": "無名氏（諺語）", "en_author": "無名氏（諺語）", "title": "幽州爲盧昌衡盧思道語", "en_title": "Youzhou Saying on Lu Changheng and Lu Sidao", "line": "（題）幽州爲盧昌衡盧思道語：盧家千里，釋奴龍子。", "text": "盧家千里，釋奴龍子。"}, {"author": "楊素", "en_author": "Yang Su", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運", "text": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮。兵寝星芒落，戰解月輪空。嚴鐎息夜鬥，骍角罷鳴弓。北風嘶朔馬，胡霜切塞鴻。休明大道暨，幽荒日用同。方就長安邸，來谒建章宮。\n 漢虜未和親，憂國不憂身。握手河梁上，窮涯北海濱。據鞍獨懷古，慷慨感良臣。曆覽多舊迹，風日慘愁人。荒塞空千里，孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮邊聲起，空飛胡騎塵。"}], "prose_count": 8}, {"id": "suiwei", "zh": "隋堤／汴水", "en": "Sui Embankment / Bianshui", "ll": [114.3, 34.8], "poems": [["無名氏《炀帝幸江南時聞民歌》", "我兒征遼東，餓死青山下。今我挽龍舟，又困随堤道。方今天下饑，路糧無些小。前去三十程，此身安可保。寒骨枕荒沙，幽魂泣煙草。悲損門内妻，望斷吾家"], ["虞世基《汴水早發應令詩》", "夏山朝萬國，軒庭會百神。成功疇與讓，盛德今爲鄰。區于屬平一，庶類仰陶鈞。銮跸臨河濟，裘冕肅柴禋。啓行分七萃，備物象三辰。"]], "note": "運河空間；“挽龍舟”的民歌在此產生", "x": 701.2, "y": 379.5, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "遊梁城詩", "en_title": "Visiting Liangthe city", "line": "揚镳曆汴浦，回扈入梁墟。漢藩文雅地，清塵暧有餘。 賓遊多任俠，台苑盛簪裾。歎息徐公", "text": "揚镳曆汴浦，回扈入梁墟。漢藩文雅地，清塵暧有餘。\n賓遊多任俠，台苑盛簪裾。歎息徐公劍，悲涼鄒子書。\n亭臯落照盡，原野沍寒初。鳥散空城夕，煙銷古樹疏。\n東越嚴子陵，西蜀馬相如。修名竊所慕，長謠獨課虛。\n===從駕經大慈照寺詩===\n玄風冠東戶，内範轶西陵。大川開寶匣，福地下金繩。\n繡栭高可映，畫栱疊相承。日馭非難假，雲師本易憑。\n陽室疑停燧，陰軒類鑒冰。迥題飛星沒，長楣宿露凝。\n旌門曙光轉，辇道夕雲蒸。山隻效靈物，水若薦休徵。\n薄命叨恩紀，微軀竊自陵。優遊徒可恃，周赉永難勝。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "泛龍舟", "en_title": "Riding the Dragon Boat", "line": "（題）泛龍舟：舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。 六辔聊", "text": "舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。\n六辔聊停禦百丈，暫罷開山歌棹讴。讵似江東掌間地，獨自稱言鑒裏遊。"}, {"author": "無名氏（歌辭）", "en_author": "無名氏（歌辭）", "title": "炀帝幸江南時聞民歌", "en_title": "Folk Song Heard on the Emperor's Visit to Jiangnan", "line": "我兒征遼東，餓死青山下。今我挽龍舟，又困随堤道。方今天下饑，路糧無些小。前去三十程，此身安可保。寒骨枕荒沙", "text": "我兒征遼東，餓死青山下。今我挽龍舟，又困随堤道。方今天下饑，路糧無些小。前去三十程，此身安可保。寒骨枕荒沙，幽魂泣煙草。悲損門内妻，望斷吾家老。安得義男兒，爛此無主屍。引其孤魂回，負其曰舟歸。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "汴水早發應令詩", "en_title": "Setting Out on the Bian River at Dawn, by Princely Command", "line": "（題）汴水早發應令詩：夏山朝萬國，軒庭會百神。成功疇與讓，盛德今爲鄰。區于屬平一，庶類仰陶鈞。", "text": "夏山朝萬國，軒庭會百神。成功疇與讓，盛德今爲鄰。區于屬平一，庶類仰陶鈞。銮跸臨河濟，裘冕肅柴禋。啓行分七萃，備物象三辰。祈祈亘原隰，濟濟鹹缙紳。陽谷升朝景，青丘發早春。兖衣敷帝則，分器叙彜倫。臨淄成誦美，河間雅樂陳。薰風穆已被，茂實久愈新。"}], "prose_count": 5}, {"id": "huai", "zh": "淮水", "en": "Huai River", "ll": [117.5, 32.9], "poems": [["楊廣《早渡淮詩》", "平淮既淼淼，曉霧複霏霏。淮甸未分色，泱漭共晨晖。 晴霞轉孤嶼，錦帆出長圻。潮魚時躍浪，沙禽鳴欲飛。 會待高秋晚，愁因逝水歸。"]], "note": "巡幸路線上的渡口", "x": 778.0, "y": 424.1, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "神仙篇", "en_title": "The Immortals", "line": "招攜。雲軒遊紫府，風驷上丹梯。 時見遼東鶴，屢聽淮南雞。玉英持作寶，瓊實采成蹊。 飛策揚輕電，懸旌耀彩霓。瑞銀光似燭，靈石髓", "text": "浮生厭危促，名嶽兵共招攜。雲軒遊紫府，風驷上丹梯。\n時見遼東鶴，屢聽淮南雞。玉英持作寶，瓊實采成蹊。\n飛策揚輕電，懸旌耀彩霓。瑞銀光似燭，靈石髓如泥。\n寥廓鸾山右，超越鳳洲西。一丸應五色，持此救人迷。"}, {"author": "盧思道", "en_author": "Lu Sidao", "title": "城南隅燕", "en_title": "Banquet in the City's South Corner", "line": "映日，流亂鳥啼春。 花飛北寺道，弦散南漳濱。舞動淮南袖，歌揚齊後塵。 骈镳歇夜馬，接轸限歸輪。公孫飲彌月，平原燕浃旬。 即是", "text": "城南氣初新，才王邀故人。輕盈雲映日，流亂鳥啼春。\n花飛北寺道，弦散南漳濱。舞動淮南袖，歌揚齊後塵。\n骈镳歇夜馬，接轸限歸輪。公孫飲彌月，平原燕浃旬。\n即是消聲地，何須遠避秦。"}, {"author": "弘執恭", "en_author": "Hong Zhigong", "title": "奉和出颍至淮應令詩", "en_title": "In Response to 'From the Ying to the Huai,' by Princely Command", "line": "睿情欣逸賞，臨泛入淮淝。棹聲喧岸度，颿影出雲飛。清流含日彩，奔浪蕩霞晖。還如漳水曲，鳴笳啓路歸", "text": "睿情欣逸賞，臨泛入淮淝。棹聲喧岸度，颿影出雲飛。清流含日彩，奔浪蕩霞晖。還如漳水曲，鳴笳啓路歸。"}, {"author": "陳政", "en_author": "陳政", "title": "贈窦蔡二記室入蜀詩", "en_title": "Presented to Recorders Dou and Cai Entering Shu", "line": "昆山積良寶，大廈構衆材。馬卿委官去，鄒子背淮來。風流信多美，朝夕豫平台。逸翮獨不群，清才複遒上。六輔昔推名，二江今振響", "text": "昆山積良寶，大廈構衆材。馬卿委官去，鄒子背淮來。風流信多美，朝夕豫平台。逸翮獨不群，清才複遒上。六輔昔推名，二江今振響。英華雖外發，磨琢終内朗。四海奮羽儀，清風久播馳。沈郁材難廁，青山翻易阻。回首望煙霞，誰知慕俦侶。飄然不系舟，爲情自可求。若奉西園夜，浩想北園愁。無因逐萍藻，從爾泛清流。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "喜春遊歌二首", "en_title": "Joy of Spring Outing, Two Songs", "line": "皇後，歌曲李夫人。 步緩知無力，臉曼動馀嬌。錦袖淮南舞，寶襪楚宮腰。", "text": "禁苑百花新，佳期遊上春。輕身趙皇後，歌曲李夫人。\n步緩知無力，臉曼動馀嬌。錦袖淮南舞，寶襪楚宮腰。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "泛龍舟", "en_title": "Riding the Dragon Boat", "line": "舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。 六辔聊停禦百丈，暫罷開山歌棹讴。讵似江東掌間地，獨自稱言鑒", "text": "舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。\n六辔聊停禦百丈，暫罷開山歌棹讴。讵似江東掌間地，獨自稱言鑒裏遊。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "賜史祥詩", "en_title": "bestowed onShi Xiang Poem", "line": "。貴耳唯聞古，賤目讵知今。 早摽刂勁草質，久有背淮心。掃逆黎山外，振旅河之陰。 功已書王府，留情太仆箴。", "text": "伯煚朝繼重，夏侯親遇深。貴耳唯聞古，賤目讵知今。\n早摽刂勁草質，久有背淮心。掃逆黎山外，振旅河之陰。\n功已書王府，留情太仆箴。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "早渡淮詩", "en_title": "Crossing the Huai at Dawn", "line": "平淮既淼淼，曉霧複霏霏。淮甸未分色，泱漭共晨晖。 晴霞轉孤嶼，錦帆出長圻。潮魚時躍浪，沙禽鳴欲飛。 ", "text": "平淮既淼淼，曉霧複霏霏。淮甸未分色，泱漭共晨晖。\n晴霞轉孤嶼，錦帆出長圻。潮魚時躍浪，沙禽鳴欲飛。\n會待高秋晚，愁因逝水歸。"}, {"author": "無名氏（鼓吹曲辭）", "en_author": "無名氏（鼓吹曲辭）", "title": "凱樂歌辭三首·述帝德", "en_title": "Triumph Songs · Telling of Imperial Virtue", "line": "事百靈。煥乎皇道，昭哉帝則。惠政滂流，仁風四塞。淮海未賓，江湖背德。運籌必勝，濯征斯克。八荒霧卷，四表雲褰。雄圖盛略，邁後光", "text": "於穆我後，睿哲欽明。膺天之命，載育群生。開元創曆，邁德垂聲。朝宗萬宇，祗事百靈。煥乎皇道，昭哉帝則。惠政滂流，仁風四塞。淮海未賓，江湖背德。運籌必勝，濯征斯克。八荒霧卷，四表雲褰。雄圖盛略，邁後光前。寰區已泰，福祚方延。長歌凱樂，天子萬年。"}, {"author": "明餘慶", "en_author": "Ming Yuqing", "title": "從軍行", "en_title": "Ballad of Joining the Army", "line": "常山陣，笳喧細柳營。劍花寒不落，弓月曉逾明。會取淮南地，持作朔方城。", "text": "三邊烽亂驚，十萬且橫行。風卷常山陣，笳喧細柳營。劍花寒不落，弓月曉逾明。會取淮南地，持作朔方城。"}, {"author": "諸葛穎", "en_author": "Zhuge Ying", "title": "奉和出颍至淮應令詩", "en_title": "In Response to 'From the Ying to the Huai,' by Princely Command", "line": "涉颍倦纡回，浮淮欣迥直。遙村含水氣，遠浦澄天色。靈濤稍欲近，仙岩行可識。玄覽屬睿辭，風雲有", "text": "涉颍倦纡回，浮淮欣迥直。遙村含水氣，遠浦澄天色。靈濤稍欲近，仙岩行可識。玄覽屬睿辭，風雲有餘力。"}, {"author": "庾自直", "en_author": "Yu Zizhi", "title": "初發東都應诏詩", "en_title": "Setting Out from the Eastern Capital, by Imperial Command", "line": "二龍承玉軸，萬騎翊林塘。縱觀此何事，巡駕幸淮揚。伊雒山川轉，江河道路長。照日秋原淨，分花曲水香。稻粱叨歲月，羽翮仰恩光", "text": "二龍承玉軸，萬騎翊林塘。縱觀此何事，巡駕幸淮揚。伊雒山川轉，江河道路長。照日秋原淨，分花曲水香。稻粱叨歲月，羽翮仰恩光。後塵歸舊裏，還如仙鶴翔。"}, {"author": "虞世南", "en_author": "Yu Shinan", "title": "奉和出颍至淮應令詩", "en_title": "In Response to 'From the Ying to the Huai,' by Princely Command", "line": "良晨喜利涉，解纜入淮浔。寒流泛鹢首，霜吹響哀吟。潛鱗波裏躍，水鳥浪前沈。邗溝非複遠，怅望悅神襟", "text": "良晨喜利涉，解纜入淮浔。寒流泛鹢首，霜吹響哀吟。潛鱗波裏躍，水鳥浪前沈。邗溝非複遠，怅望悅神襟。"}, {"author": "蔡允恭", "en_author": "Cai Yungong", "title": "奉和出颍至淮應令詩", "en_title": "In Response to 'From the Ying to the Huai,' by Princely Command", "line": "久倦川途曲，忽此望淮圻。波長泛淼淼，眺迥情依依。稍覺金烏轉，漸見錦帆稀。欲知仁化洽，讴歌滿路歸", "text": "久倦川途曲，忽此望淮圻。波長泛淼淼，眺迥情依依。稍覺金烏轉，漸見錦帆稀。欲知仁化洽，讴歌滿路歸。"}], "prose_count": 31}, {"id": "jiangdu", "zh": "江都／揚州", "en": "Jiangdu / Yangzhou", "ll": [119.4, 32.4], "poems": [["楊廣《江都宮樂歌》", "揚州舊處可淹留，台榭高明複好遊。風亭芳樹迎早夏，長臯麥隴送馀秋。 渌潭桂楫浮青雀，果下金鞍躍紫骝。綠觞素蟻流霞飲，長袖清歌樂戲州。"], ["楊廣《泛龍舟》", "舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。 六辔聊停禦百丈，暫罷開山歌棹讴。讵似江東掌間地，獨自稱言鑒裏遊。"], ["楊廣《幸江都作詩》", "求歸不得去，真成遭固}春。鳥聲争勸酒，梅花笑殺人。"], ["楊廣《四時白纻歌·江都夏》", "黃梅雨細麥秋輕，楓葉蕭蕭江水平。飛樓绮觀軒若驚，花簟羅帏當夜清，菱潭落日雙凫舫。 綠水紅妝兩搖渌，還似扶桑碧海上。誰肯空"], ["虞世基《奉和幸江都應詔詩》", "巡遊光帝典，征吉乃先天。澤國翔宸駕，水府泛樓船。七萃萦長薄，三翼亘通川。夙興大昕始，求衣昧旦前。澄瀾浮曉色，遙林卷宿煙。"], ["虞世南《奉和幸江都應詔詩》", "南國行周北，稽山秘夏圖。百王豈殊軌，千載協前谟。肆觐遵時豫，順動悅來蘇。安流進玉舳，戒道翼金吾。龍旂煥辰象，鳳吹溢川途。"], ["孫萬壽《和張丞奉詔於江都望京口詩》", "回首觀濤處，極望滄海湄。流波去無限，喬木不勝悲。 蓬萊雖已變，池塘尚所思。歸飛路窮此，怅望情難持。 吾生乃民季"]], "note": "巡幸終點；“揚州舊處可淹留”——詩歌把江都寫成第二都城", "x": 823.6, "y": 435.8, "hits": [{"author": "孫萬壽", "en_author": "Sun Wanshou", "title": "和張丞奉诏於江都望京口詩", "en_title": "Matching Assistant Zhang's 'Gazing at Jingkou from Jiangdu'", "line": "（題）和張丞奉诏於江都望京口詩：回首觀濤處，極望滄海湄。流波去無限，喬木不勝悲。 蓬萊雖已變，池塘尚所思", "text": "回首觀濤處，極望滄海湄。流波去無限，喬木不勝悲。\n蓬萊雖已變，池塘尚所思。歸飛路窮此，怅望情難持。\n吾生乃民季，疇日佐藩維。尚想西園夕，猶懷北固時。\n城邑才辨處，風煙忽何之。跂予未能已，顧歎空遲遲。\n===和周記室遊舊京詩===\n大夫愍周廟，王子泣殷墟。自然心斷絕，何關系慘舒。\n仆本漳濱士，舊國亦淪胥。紫陌風塵起，青壇冠蓋疏。\n台留子建賦，宮落仲将書。谯周自題柱，商容誰表闾。\n聞君懷古曲，同病亦漣如。方知周處歎，前後信非虛。"}, {"author": "孫萬壽", "en_author": "Sun Wanshou", "title": "早發揚州還望鄉邑詩", "en_title": "Leaving Yangzhou at Dawn, Gazing Toward Home", "line": "（題）早發揚州還望鄉邑詩：鄉關不再見，怅望窮此晨。山煙蔽鍾阜，水霧隐江津。 洲渚斂寒色，杜若變芳春", "text": "鄉關不再見，怅望窮此晨。山煙蔽鍾阜，水霧隐江津。\n洲渚斂寒色，杜若變芳春。無複歸飛羽，空悲沙塞塵。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "江都宮樂歌", "en_title": "Song of the Jiangdu Palace", "line": "（題）江都宮樂歌：揚州舊處可淹留，台榭高明複好遊。風亭芳樹迎早夏，長臯麥隴送馀秋。 渌潭桂", "text": "揚州舊處可淹留，台榭高明複好遊。風亭芳樹迎早夏，長臯麥隴送馀秋。\n渌潭桂楫浮青雀，果下金鞍躍紫骝。綠觞素蟻流霞飲，長袖清歌樂戲州。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "泛龍舟", "en_title": "Riding the Dragon Boat", "line": "舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。 六辔聊停禦百丈，暫罷開山歌棹讴。讵似", "text": "舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。\n六辔聊停禦百丈，暫罷開山歌棹讴。讵似江東掌間地，獨自稱言鑒裏遊。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "四時白纻歌二首·江都夏", "en_title": "White Ramie Songs of the Four Seasons · Jiangdu in Summer", "line": "（題）四時白纻歌二首·江都夏：黃梅雨細麥秋輕，楓葉蕭蕭江水平。飛樓绮觀軒若驚，花簟羅帏當夜清，菱潭落日", "text": "黃梅雨細麥秋輕，楓葉蕭蕭江水平。飛樓绮觀軒若驚，花簟羅帏當夜清，菱潭落日雙凫舫。\n綠水紅妝兩搖渌，還似扶桑碧海上。誰肯空歌采蓮唱。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "幸江都作詩", "en_title": "Composed on a Visit to Jiangdu", "line": "（題）幸江都作詩：求歸不得去，真成遭{{}固}春。鳥聲争勸酒，梅花笑殺人。", "text": "求歸不得去，真成遭{{}固}春。鳥聲争勸酒，梅花笑殺人。"}, {"author": "柳𧦬", "en_author": "Liu Bian", "title": "奉和晚日楊子江應教詩", "en_title": "In Response to 'The Setting Sun on the Yangzi,' on Instruction", "line": "大江都會所，長洲有舊名。西流控岷蜀，東泛迩蓬瀛。未睹纖羅動，先聽遠濤聲。空濛雲", "text": "大江都會所，長洲有舊名。西流控岷蜀，東泛迩蓬瀛。未睹纖羅動，先聽遠濤聲。空濛雲色晦，浃壘浪華生。欲知暮雨歇，當觀飛旆輕。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "四時白纻歌二首·江都夏", "en_title": "White Ramie Songs of the Four Seasons · Jiangdu in Summer", "line": "（題）四時白纻歌二首·江都夏：長洲茂苑朝夕池，映日含風結細漪。坐當伏檻紅蓮披，雕軒洞戶青蘋吹。輕幌芳煙", "text": "長洲茂苑朝夕池，映日含風結細漪。坐當伏檻紅蓮披，雕軒洞戶青蘋吹。輕幌芳煙郁金馥，绮檐花簟桃李枝。蘭苕翡翠但相逐，桂樹鴛鴦恒并宿。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "奉和幸江都應诏詩", "en_title": "In Response to 'The Visit to Jiangdu,' by Imperial Command", "line": "（題）奉和幸江都應诏詩：巡遊光帝典，征吉乃先天。澤國翔宸駕，水府泛樓船。七萃萦長薄，三翼亘通川。", "text": "巡遊光帝典，征吉乃先天。澤國翔宸駕，水府泛樓船。七萃萦長薄，三翼亘通川。夙興大昕始，求衣昧旦前。澄瀾浮曉色，遙林卷宿煙。晨霞稍含景，落月漸虧弦。回塘響歌吹，極浦望旌旃。方陪觐東後，登封禅肅然。"}, {"author": "虞世南", "en_author": "Yu Shinan", "title": "奉和幸江都應诏詩", "en_title": "In Response to 'The Visit to Jiangdu,' by Imperial Command", "line": "（題）奉和幸江都應诏詩：南國行周北，稽山秘夏圖。百王豈殊軌，千載協前谟。肆觐遵時豫，順動悅來蘇。", "text": "南國行周北，稽山秘夏圖。百王豈殊軌，千載協前谟。肆觐遵時豫，順動悅來蘇。安流進玉舳，戒道翼金吾。龍旂煥辰象，鳳吹溢川途。封唐昔敷錫，分陝被荊吳。沐道鹹知讓，慕義久成都。冬律初飛管，陽鳥正銜蘆。嚴飚肅林薄，暧景澹江湖。鴻私浃幽遠，厚澤潤凋枯。虞琴起歌詠，漢築動巴歈。多幸沾行葦，無庸類散樗。"}], "prose_count": 16}, {"id": "jiangnan", "zh": "江南／建康", "en": "Jiangnan / Jiankang", "ll": [118.8, 32.1], "poems": [["虞世基《初渡江詩》", "斂策暫回首，掩涕望江濱。無複東南氣，空随西北雲。"], ["孫萬壽《和張丞奉詔於江都望京口詩》", ""]], "note": "旧陈故地；南朝的文学记忆", "x": 809.2, "y": 442.8, "hits": [{"author": "孫萬壽", "en_author": "Sun Wanshou", "title": "遠戍江南 (寄京邑親友)", "en_title": "Garrisoned in Jiangnan (Sent to Kin in the Capital)", "line": "賈誼長沙國，屈平湘水濱。江南瘴疠地，從來多逐臣。 粵餘非巧宦，少小拙謀身。欲飛無假翼，思鳴不值晨。 ", "text": "賈誼長沙國，屈平湘水濱。江南瘴疠地，從來多逐臣。\n粵餘非巧宦，少小拙謀身。欲飛無假翼，思鳴不值晨。\n如何載筆士，翻作負戈人。飄飖如木偶，葉置同刍狗。\n失路乃西浮，非狂亦東走。晚歲出函關，方春度京口。\n石城臨虎據，天津望牛鬥。牛鬥盛妖氛，枭獍已成群。\n郄超初入暮，王粲始從軍。裏糧楚山際，披甲吳江汶。\n吳江一浩蕩，楚山何紏紛。驚波上濺日，喬木下臨雲。\n系越恒資辯，喻蜀幾飛文。魯連唯救患，吾彥不争勳。\n羁遊歲月久，歸思常搔首。非關不樹萱，豈爲無杯酒。\n數載辭鄉縣，三秋別親友。壯志後風雲，衰鬓先蒲柳。\n心緒亂如絲，空懷疇昔時。昔時遊帝裏，弱歲逢知己。\n旅食南館中，飛蓋西園裏。河間本好書，東平唯愛士。\n英辯接天人，清言洞名理。鳳池時寓直，麟閣常遊止。\n勝地盛賓僚，麗景相攜招。舟泛昆明水，騎指渭津橋。\n祓除臨灞岸，供帳出東郊。宜城醞始熟，陽翟曲新調。\n繞樹烏啼夜，雊麥雉飛朝。細塵梁下落，長袖掌中嬌。\n歡娛三樂至，懷抱百憂銷。夢想猶如昨，尋思久寂寥。\n一朝牽世網，萬里逐波潮。回輪常自轉，懸旆不堪搖。\n登高視衿帶，鄉關白雲外。回首望孤城，愁人益不平。\n華亭宵鶴唳，幽谷早莺鳴。斷絕心難續，惝恍魂屢驚。\n群紀通家好，鄒魯故鄉情。若值南飛雁，時能訪死生。"}, {"author": "孫萬壽", "en_author": "Sun Wanshou", "title": "和張丞奉诏於江都望京口詩", "en_title": "Matching Assistant Zhang's 'Gazing at Jingkou from Jiangdu'", "line": "（題）和張丞奉诏於江都望京口詩：回首觀濤處，極望滄海湄。流波去無限，喬木不勝悲。 蓬萊雖已變，池塘尚所思", "text": "回首觀濤處，極望滄海湄。流波去無限，喬木不勝悲。\n蓬萊雖已變，池塘尚所思。歸飛路窮此，怅望情難持。\n吾生乃民季，疇日佐藩維。尚想西園夕，猶懷北固時。\n城邑才辨處，風煙忽何之。跂予未能已，顧歎空遲遲。\n===和周記室遊舊京詩===\n大夫愍周廟，王子泣殷墟。自然心斷絕，何關系慘舒。\n仆本漳濱士，舊國亦淪胥。紫陌風塵起，青壇冠蓋疏。\n台留子建賦，宮落仲将書。谯周自題柱，商容誰表闾。\n聞君懷古曲，同病亦漣如。方知周處歎，前後信非虛。"}, {"author": "弘執恭", "en_author": "Hong Zhigong", "title": "劉生", "en_title": "Liu Sheng", "line": "英名振關右，雄氣逸江東。遊俠五都内，去來三秦中。劍照七星影，馬控千金骢。縱橫方未息，因茲定武功", "text": "英名振關右，雄氣逸江東。遊俠五都内，去來三秦中。劍照七星影，馬控千金骢。縱橫方未息，因茲定武功。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "泛龍舟", "en_title": "Riding the Dragon Boat", "line": "北海西頭。 六辔聊停禦百丈，暫罷開山歌棹讴。讵似江東掌間地，獨自稱言鑒裏遊。", "text": "舳舻千里泛歸舟，言旋舊鎮下揚州。借問揚州在何處，淮南江北海西頭。\n六辔聊停禦百丈，暫罷開山歌棹讴。讵似江東掌間地，獨自稱言鑒裏遊。"}, {"author": "無名氏（歌辭）", "en_author": "無名氏（歌辭）", "title": "炀帝幸江南時聞民歌", "en_title": "Folk Song Heard on the Emperor's Visit to Jiangnan", "line": "（題）炀帝幸江南時聞民歌：我兒征遼東，餓死青山下。今我挽龍舟，又困随堤道。方今天下饑，路糧無些小。", "text": "我兒征遼東，餓死青山下。今我挽龍舟，又困随堤道。方今天下饑，路糧無些小。前去三十程，此身安可保。寒骨枕荒沙，幽魂泣煙草。悲損門内妻，望斷吾家老。安得義男兒，爛此無主屍。引其孤魂回，負其曰舟歸。"}, {"author": "無名氏（謠辭）", "en_author": "無名氏（謠辭）", "title": "隋末江東童謠", "en_title": "Jiangdong Children's Rhyme of the Late Sui", "line": "（題）隋末江東童謠：江水保泠泠，楊柳何青青。人今正好樂，已復戍彭城。", "text": "江水保泠泠，楊柳何青青。人今正好樂，已復戍彭城。"}, {"author": "孔德紹", "en_author": "Kong Deshao", "title": "送蔡君知-入蜀詩二首", "en_title": "Farewell to Cai Junzhi Entering Shu, Two Poems", "line": "金陵已去國，銅梁忽背飛。失路遠相送，他鄉何日歸。  靈關九折險，蜀道二星遙。", "text": "金陵已去國，銅梁忽背飛。失路遠相送，他鄉何日歸。\n 靈關九折險，蜀道二星遙。乘楂若有便，希泛廣陵潮。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "豫章行", "en_title": "Song of Yuzhang", "line": "江南地遠接閩瓯，山東英妙屢經遊。前瞻疊障千重阻，卻帶驚湍萬里流。楓葉朝飛向京", "text": "江南地遠接閩瓯，山東英妙屢經遊。前瞻疊障千重阻，卻帶驚湍萬里流。楓葉朝飛向京洛，文魚夜過曆吳洲。君行遠度茱萸嶺，妾住長依明月樓。樓中愁思不開嚬，始複臨窗望早春。鴛鴦水上萍初合，鳴鶴園中花并新。空憶常時角枕處，無複前日畫眉人。照骨金環誰用許，見膽明鏡自生塵。\n 蕩子從來好留滞，況複關山遠迢遞。當學織女嫁牽牛，莫作姮娥叛夫婿。偏訝思君無限極，欲罷欲忘還複憶。願作王母三青鳥，飛去飛來傳消息。豐城雙劍昔曾離，經年累月複相随。不畏将軍成久別，隻恐封侯心更移。"}], "prose_count": 39}, {"id": "jiangling", "zh": "江陵", "en": "Jiangling", "ll": [112.2, 30.3], "poems": [["楊廣《江陵女歌》", "雨從天上落，水從橋下流。拾得娘裙帶，同心結兩頭。"]], "note": "楚地民歌传统", "x": 650.8, "y": 485.0, "hits": [{"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "江陵女歌", "en_title": "Song of a Jiangling Girl", "line": "（題）江陵女歌：雨從天上落，水從橋下流。拾得娘裙帶，同心結兩頭。", "text": "雨從天上落，水從橋下流。拾得娘裙帶，同心結兩頭。"}], "prose_count": 14}, {"id": "liaodong", "zh": "遼東／高麗", "en": "Liaodong / Koguryo", "ll": [125.3, 41.0], "poems": [["楊廣《紀遼東二首》", "秉旄仗節定遼東，俘馘變夷風。"], ["乙支文德《遺于仲文詩》", "神策究天文，妙算窮地理。戰勝功既高，知足願雲止。"], ["王胄《紀遼東》", "遼東浿水事龔行，俯拾信神兵。欲知振旅旋歸樂，為聽凱歌聲。"]], "note": "大業八年征遼的战场空间", "x": 965.2, "y": 234.1, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "神仙篇", "en_title": "The Immortals", "line": "促，名嶽兵共招攜。雲軒遊紫府，風驷上丹梯。 時見遼東鶴，屢聽淮南雞。玉英持作寶，瓊實采成蹊。 飛策揚輕電，懸旌耀彩霓。瑞銀光", "text": "浮生厭危促，名嶽兵共招攜。雲軒遊紫府，風驷上丹梯。\n時見遼東鶴，屢聽淮南雞。玉英持作寶，瓊實采成蹊。\n飛策揚輕電，懸旌耀彩霓。瑞銀光似燭，靈石髓如泥。\n寥廓鸾山右，超越鳳洲西。一丸應五色，持此救人迷。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "白馬篇", "en_title": "The White Horse", "line": "白馬金貝裝，橫行遼水傍。問是誰家子，宿衛羽林郎。 文犀六屬铠，寶劍七星光。山虛弓響徹，地迥角", "text": "白馬金貝裝，橫行遼水傍。問是誰家子，宿衛羽林郎。\n文犀六屬铠，寶劍七星光。山虛弓響徹，地迥角聲長。\n宛河推勇氣，隴蜀擅威強。輪台受降虜，高阙翦名王。\n射熊入飛觀，校獵下長楊。英名欺衛霍，智策蔑平良。\n島夷時失禮，卉服犯邊疆。徵兵集薊北，輕騎出漁陽。\n進軍随日暈，挑戰逐星芒。陣移龍勢動，營開虎翼張。\n沖冠入死地，攘臂越金湯。塵飛戰鼓急，風交征旆揚。\n轉鬥平華地，追奔掃大方。本持身許國，況複武功彰。\n曾令千載後，流譽滿旂常。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "紀遼東二首", "en_title": "Recording Liaodong, Two Poems", "line": "（雜言） 遼東海北翦長鲸，風雲萬里清。方當銷鋒散馬牛，旋師宴鎬京。 前歌後舞振軍威，飲", "text": "（雜言）\n遼東海北翦長鲸，風雲萬里清。方當銷鋒散馬牛，旋師宴鎬京。\n前歌後舞振軍威，飲至解戎衣。判不徒行萬里去，空道五原歸。\n秉旄伏節定遼東，俘馘變夷風。清歌凱捷九都水，歸宴雒陽宮。\n策功行賞不淹留，全軍藉智謀。讵似南宮複道上，先封雍齒侯。\n*詩"}, {"author": "王胄", "en_author": "Wang Zhou", "title": "白馬篇", "en_title": "The White Horse", "line": "争先。王師已得隽，夷首失求全。鼓行狥玉檢，乘勝蕩朝鮮。志勇期功立，甯憚微軀捐。不羨山河賞，誰希竹素傳。", "text": "白馬黃金鞍，蹀躞柳城前。問此何鄉客，長安惡少年。結發從戎事，馳名振朔邊。良弓控繁弱，利劍揮龍泉。披林扼凋虎，仰手接飛鸢。前年破沙漠，昔歲取祁連。折沖摧右校，搴旗殪左賢。昆彌還謝力，慶忌本推儇。海外平遐險，來庭識負褰。三韓勞薄伐，六事指幽燕。良家選河右，猛将征西山。浮雲屯羽騎，蔽日引長旃。自矜有餘勇，應募忽争先。王師已得隽，夷首失求全。鼓行狥玉檢，乘勝蕩朝鮮。志勇期功立，甯憚微軀捐。不羨山河賞，誰希竹素傳。"}, {"author": "王胄", "en_author": "Wang Zhou", "title": "敦煌樂二首", "en_title": "Dunhuang Music, Two Songs", "line": "，平原忽超遠。心期在何處，望望崦嵫晚。 ===紀遼東二首===  遼東浿水事龔行，俯拾信神兵。欲知振旅旋歸樂，爲聽凱歌聲。十", "text": "長途望無已，高山斷還續。意欲此念時，氣絕不成曲。\n 極目眺修塗，平原忽超遠。心期在何處，望望崦嵫晚。\n===紀遼東二首===\n 遼東浿水事龔行，俯拾信神兵。欲知振旅旋歸樂，爲聽凱歌聲。十乘元戎才渡遼，扶濊已冰消。讵似百萬臨江水，按辔空回镳。\n 天威電邁舉朝鮮，信次即信旋。還笑魏家司馬懿，迢迢用一年。鳴銮诏跸發淆潼，合爵有疇庸。何必豐沛多相識，比屋降堯封。"}, {"author": "無名氏（歌辭）", "en_author": "無名氏（歌辭）", "title": "炀帝幸江南時聞民歌", "en_title": "Folk Song Heard on the Emperor's Visit to Jiangnan", "line": "我兒征遼東，餓死青山下。今我挽龍舟，又困随堤道。方今天下饑，路糧無些小。前去三十程", "text": "我兒征遼東，餓死青山下。今我挽龍舟，又困随堤道。方今天下饑，路糧無些小。前去三十程，此身安可保。寒骨枕荒沙，幽魂泣煙草。悲損門内妻，望斷吾家老。安得義男兒，爛此無主屍。引其孤魂回，負其曰舟歸。"}, {"author": "無名氏（謠辭）", "en_author": "無名氏（謠辭）", "title": "大業長白山謠", "en_title": "Changbai Mountain Rhyme of the Daye Era", "line": "吃獐鹿，下山吃牛羊。忽聞官軍至，提刀向前蕩。譬如遼東死，斬頭何所傷。", "text": "長白山前知世郎，純著紅羅綿背裆。長槊侵天半，輪刀耀日光。上山吃獐鹿，下山吃牛羊。忽聞官軍至，提刀向前蕩。譬如遼東死，斬頭何所傷。"}, {"author": "孔德紹", "en_author": "Kong Deshao", "title": "賦得華亭鶴詩", "en_title": "Set Topic: The Crane of Huating", "line": "悲風。心危白露下，聲斷彩弦中。何言斯物變，翻複似遼東。", "text": "華亭失侶鶴，乘軒寵遂終。三山淩苦霧，千里激悲風。心危白露下，聲斷彩弦中。何言斯物變，翻複似遼東。"}, {"author": "楊素", "en_author": "Yang Su", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮", "text": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮。兵寝星芒落，戰解月輪空。嚴鐎息夜鬥，骍角罷鳴弓。北風嘶朔馬，胡霜切塞鴻。休明大道暨，幽荒日用同。方就長安邸，來谒建章宮。\n 漢虜未和親，憂國不憂身。握手河梁上，窮涯北海濱。據鞍獨懷古，慷慨感良臣。曆覽多舊迹，風日慘愁人。荒塞空千里，孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮邊聲起，空飛胡騎塵。"}], "prose_count": 9}, {"id": "huaiyang", "zh": "淮陽", "en": "Huaiyang", "ll": [114.9, 33.7], "poems": [["李密《五言詩》（淮陽感秋）", "金風蕩初節，玉露凋晚林。此夕窮途士，郁陶傷寸心。野平葭葦合，村落藿藜深。眺聽良多感，徙倚獨沾襟。沾襟何所爲，怅然懷古意。秦俗猶未平，漢道将何"]], "note": "隋末李密寄居地；《淮陽感秋》寫於此，是少數非宮廷的個人詠懷", "x": 715.6, "y": 405.3, "hits": [], "prose_count": 1}, {"id": "wangzeling", "zh": "王澤嶺", "en": "Wangze Ridge", "ll": [113.5, 34.9], "poems": [["孔德紹《王澤嶺遭洪水詩》", "地籁風聲急，天津雲色愁。悠然萬頃滿，俄爾百川浮。還似金堤溢，翻如碧海流。驚濤遙起鹭，回岸不分牛。徒知懷趙景，終是倦陽侯。木梗誠無托，蘆灰豈暇"]], "note": "寫洪水的紀事詩；「悠然萬頃滿，俄爾百川浮」", "x": 682.0, "y": 377.2, "hits": [{"author": "孔德紹", "en_author": "Kong Deshao", "title": "王澤嶺遭洪水詩", "en_title": "Caught in the Flood at Wangze Ridge", "line": "（題）王澤嶺遭洪水詩：地籁風聲急，天津雲色愁。悠然萬頃滿，俄爾百川浮。還似金堤溢，翻如碧海流。", "text": "地籁風聲急，天津雲色愁。悠然萬頃滿，俄爾百川浮。還似金堤溢，翻如碧海流。驚濤遙起鹭，回岸不分牛。徒知懷趙景，終是倦陽侯。木梗誠無托，蘆灰豈暇求。思得乘槎便，蕭然河漢遊。"}], "prose_count": 0}, {"id": "weiyuan", "zh": "渭源／隴右", "en": "Weiyuan", "ll": [104.2, 35.2], "poems": [["楊廣《臨渭源詩》", "西征乃屆此，山路亦悠悠。地幹紀靈異，同穴吐洪流。 濫觞何足拟，浮槎難可俦。驚波鳴澗石，澄岸瀉岩樓。 滔滔下狄縣，淼淼肆神州。長林嘯白獸，雲徑"], ["薛道衡《奉和臨渭源應詔詩》", "玄功複禹迹，至德去湯羅。玉關亭障遠，金方水石多。八川茲一态，萬里導長波。驚流注陸海，激浪象天河。鸾旗曆岩谷，龍穴暫經過。西老陪遊宴，南風起詠"], ["柳𧦬《奉和春日臨渭水應令詩》", "飲馬投錢岸，解釣剖璜津。風絲曳香餌，覆杯懷昔人。"]], "note": "西巡隴右、臨渭水之源；隋煬帝與薛道衡的奉和組詩", "x": 458.8, "y": 370.1, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "贈劉儀同西聘詩", "en_title": "Presented to Liu Yitong on His Western Mission", "line": "柔遠，賓越盡招攜。豈若馳天使，玉節撫遺黎。 五祠臨渭北，雙嶺帶崤西。故關看金馬，餘壇聽寶雞。 垂絲被柳陌，落錦覆桃蹊。分袪俄", "text": "開邛昔柔遠，賓越盡招攜。豈若馳天使，玉節撫遺黎。\n五祠臨渭北，雙嶺帶崤西。故關看金馬，餘壇聽寶雞。\n垂絲被柳陌，落錦覆桃蹊。分袪俄易慘，離思實難赍。\n極野雲峰合，遙嶂日輪低。塵暗前旌沒，風長後騎嘶。\n灞陵行可望，函谷久無泥。須君勞旋罷，春草共萋萋。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "臨渭源詩", "en_title": "By the Source of the Wei", "line": "（題）臨渭源詩：西征乃屆此，山路亦悠悠。地幹紀靈異，同穴吐洪流。 濫觞何足拟，浮槎難可俦", "text": "西征乃屆此，山路亦悠悠。地幹紀靈異，同穴吐洪流。\n濫觞何足拟，浮槎難可俦。驚波鳴澗石，澄岸瀉岩樓。\n滔滔下狄縣，淼淼肆神州。長林嘯白獸，雲徑想青牛。\n風歸花葉散，日舉煙霧收。直爲求人隐，非窮轍迹遊。"}, {"author": "柳𧦬", "en_author": "Liu Bian", "title": "奉和春日臨渭水應令詩", "en_title": "In Response to “springbythe Weiby princely command” by Imperial Command", "line": "（題）奉和春日臨渭水應令詩：飲馬投錢岸，解釣剖璜津。風絲曳香餌，覆杯懷昔人。", "text": "飲馬投錢岸，解釣剖璜津。風絲曳香餌，覆杯懷昔人。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "奉和臨渭源應诏詩", "en_title": "In Response to “By the Source of the Weiby imperial command” by Imperial Command", "line": "（題）奉和臨渭源應诏詩：玄功複禹迹，至德去湯羅。玉關亭障遠，金方水石多。八川茲一态，萬里導長波。", "text": "玄功複禹迹，至德去湯羅。玉關亭障遠，金方水石多。八川茲一态，萬里導長波。驚流注陸海，激浪象天河。鸾旗曆岩谷，龍穴暫經過。西老陪遊宴，南風起詠歌。庶品蒙仁澤，生靈穆太和。微臣惜暮景，願駐魯陽戈。"}], "prose_count": 2}, {"id": "yunzhong", "zh": "雲中／定襄", "en": "Yunzhong", "ll": [111.6, 40.4], "poems": [["楊廣《雲中受突厥主朝宴席賦詩》", "鹿塞鴻旗駐，龍庭翠輦回， 氈帳望風舉，穹廬向日開。 呼韓頓顙至，屠耆接踵來。 索辮擎{}肉，韋{}獻酒杯。 何如漢天子，空上單于臺？"]], "note": "突厥可汗朝宴空間；“鹿塞鴻旗駐，龍庭翠輦回”；和親詩另見突厥／漠北", "x": 636.4, "y": 248.2, "hits": [{"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "雲中受突厥主朝宴席賦詩", "en_title": "Composed at the Banquet for the Tujue Qaghan at Yunzhong", "line": "（題）雲中受突厥主朝宴席賦詩：鹿塞鴻旗駐，龍庭翠輦回， 氈帳望風舉，穹廬向日開。 呼韓頓顙至，屠耆接踵", "text": "鹿塞鴻旗駐，龍庭翠輦回，\n氈帳望風舉，穹廬向日開。\n呼韓頓顙至，屠耆接踵來。\n索辮擎{}肉，韋{}獻酒杯。\n何如漢天子，空上單于臺？"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙", "text": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳難。從軍多惡少，召募盡材官。伏堤時卧鼓，疑兵乍解鞍。柳城擒冒頓，長坂納呼韓。受降今更築，燕然已重刊。還嗤傅介子，辛苦刺樓蘭。\n 邊庭烽火驚，插羽夜徵兵。少昊騰金氣，文昌動将星。長驅鞮汗北，直指夫人城。絕漠三秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙，鈎鲲臨北溟。當知霍骠騎，高第起西京。"}], "prose_count": 0}, {"id": "hanhai", "zh": "瀚海／燕然", "en": "Hanhai / Yanran", "ll": [105.5, 45.0], "poems": [["楊素《出塞》", "冠軍臨瀚海，長平翼大風。"], ["薛道衡《出塞》", "受降今更築，燕然已重刊。"], ["虞世基《出塞》", "瀚海波瀾靜，王庭氛霧晞。"]], "note": "邊塞詩的遠端空間：瀚海、燕然、龍庭，多为用典而非實歷", "x": 490.0, "y": 140.3, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "從軍行", "en_title": "Ballad of Joining the Army", "line": "蕭蕭渡水來，歸雁連連映天沒。 從軍行，軍行萬里出龍庭，單于渭橋今已拜，将軍何處覓功名。 *詩 ===仰贈特進陽休之詩===（", "text": "朔方烽火照甘泉，長安飛将出祁連。犀渠玉劍良家子，白馬金羁俠少年。\n平明偃月屯右地，薄暮魚麗逐左賢。谷中石虎經銜箭，山上金人曾祭天。\n天涯一去無窮已，薊門迢遞三千里。朝見馬嶺黃沙合，夕望龍城陣雲起。\n庭中奇樹已堪攀，塞外征人殊未還。白雪初下天山外，浮雲直上五原間。\n關山萬里不可越，誰能坐對芳菲月。流水本自斷人腸，堅冰舊來傷馬骨。\n邊庭節物與華異，冬霰秋霜春不歇。長風蕭蕭渡水來，歸雁連連映天沒。\n從軍行，軍行萬里出龍庭，單于渭橋今已拜，将軍何處覓功名。\n*詩\n===仰贈特進陽休之詩===（七章并序）\n 夫士之在俗，所以騰聲邁實，郁爲時宗者，厥塗有三焉：才也，位也，年也。才則弘道立言，師範雅俗；位則乘軒服冕，燮代天工；年則貳膳杖朝，緻養膠序。緬尋古始，永鑒前哲，齒曆身名，鮮能俱泰，特進陽公兼而有之矣。大齊武平之五載，抗表懸車，難進之風。首振頹俗，餘不勝嘉仰，敬贈是詩。\n幽求遂古，逖聽前聞。鴻荒眇邈，篆策絪缊。\n體國經野，爲鳥爲雲。果行毓德，或武或文。\n於铄君子，含章挺秀。龍翰鳳翼，玉榮松茂。\n逸韻孤峙，奇峰回構。慕舜匪高，希顔可陋。\n藝殚文府，學究書林。盡則窮麗，索隐鈎深。\n靈珠耀手，明鏡懸心。聲偃華裔，道冠衣簪。\n豹變其文，鴻漸於陸。入作卿士，出爲嶽牧。\n千社萬鍾，玄冕丹毂。神之聽之，介以景福。\n漢稱廣德，晉美劇陽。君亦高蹈，二此鴻芳。\n知足知止，令問令望。功遂身退，休有烈光。\n聞風伯夷，懦夫自立。祖道疏傅，行人霣泣。\n公之戾止，僚友胥集。瞻彼高山，每懷靡及。\n餘實膚陋，少不及門。挾策問道，捧帚承恩。\n以茲高義，被於後昆。式歌且舞，敢贈長言。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "錦石搗流黃二首", "en_title": "Beating Cloth at Brocade Rock, Two Poems", "line": "漢使出燕然，愁閨夜不眠。易制殘燈下，鳴砧秋月前。 今夜長城下，雲昏月應暗。誰見倡樓", "text": "漢使出燕然，愁閨夜不眠。易制殘燈下，鳴砧秋月前。\n今夜長城下，雲昏月應暗。誰見倡樓前，心悲不成慘。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "雲中受突厥主朝宴席賦詩", "en_title": "Composed at the Banquet for the Tujue Qaghan at Yunzhong", "line": "鹿塞鴻旗駐，龍庭翠輦回， 氈帳望風舉，穹廬向日開。 呼韓頓顙至，屠耆接踵來。 索辮擎{}", "text": "鹿塞鴻旗駐，龍庭翠輦回，\n氈帳望風舉，穹廬向日開。\n呼韓頓顙至，屠耆接踵來。\n索辮擎{}肉，韋{}獻酒杯。\n何如漢天子，空上單于臺？"}, {"author": "無名氏（雜曲歌辭）", "en_author": "無名氏（雜曲歌辭）", "title": "摩多樓子", "en_title": "The Moduo Lad", "line": "從戎向邊北，遠行醉密親。借問陰山候，還知塞上人。", "text": "從戎向邊北，遠行醉密親。借問陰山候，還知塞上人。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "摧朽無勍敵，應變有先機。銜枚壓曉陣，卷甲解朝圍。瀚海波瀾靜，王庭氛霧晞。鼓鼙嚴朔氣，原野曀寒晖。勳庸震邊服，歌吹入京畿。待拜", "text": "窮秋塞莫腓，塞外胡塵飛。徵兵廣武至，候騎陰山歸。廟堂千里策，将軍百戰威。轅門臨玉帳，大旆指金微。摧朽無勍敵，應變有先機。銜枚壓曉陣，卷甲解朝圍。瀚海波瀾靜，王庭氛霧晞。鼓鼙嚴朔氣，原野曀寒晖。勳庸震邊服，歌吹入京畿。待拜長平坂，鳴驺入禮闱。\n 上将三略遠，元戎九命尊。緬懷古人節，思酬明主恩。山西多勇氣，塞北有遊魂。揚桴度隴坂，勒騎上平原。誓将絕沙漠，悠然去玉門。輕赍不遑舍，驚策骛戎軒。懔懔邊風急，蕭蕭征馬煩。雪暗天山道，冰塞交河源。霧烽黯無色，霜旗凍不翻。耿介倚長劍，日落風塵昏。"}, {"author": "楊素", "en_author": "Yang Su", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮。兵寝星芒落", "text": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮。兵寝星芒落，戰解月輪空。嚴鐎息夜鬥，骍角罷鳴弓。北風嘶朔馬，胡霜切塞鴻。休明大道暨，幽荒日用同。方就長安邸，來谒建章宮。\n 漢虜未和親，憂國不憂身。握手河梁上，窮涯北海濱。據鞍獨懷古，慷慨感良臣。曆覽多舊迹，風日慘愁人。荒塞空千里，孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮邊聲起，空飛胡騎塵。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "疑兵乍解鞍。柳城擒冒頓，長坂納呼韓。受降今更築，燕然已重刊。還嗤傅介子，辛苦刺樓蘭。  邊庭烽火驚，插羽夜徵兵。少昊騰金氣，", "text": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳難。從軍多惡少，召募盡材官。伏堤時卧鼓，疑兵乍解鞍。柳城擒冒頓，長坂納呼韓。受降今更築，燕然已重刊。還嗤傅介子，辛苦刺樓蘭。\n 邊庭烽火驚，插羽夜徵兵。少昊騰金氣，文昌動将星。長驅鞮汗北，直指夫人城。絕漠三秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙，鈎鲲臨北溟。當知霍骠騎，高第起西京。"}], "prose_count": 2}, {"id": "jiaohe", "zh": "交河／天山", "en": "Jiaohe / Tianshan", "ll": [89.5, 43.0], "poems": [["虞世基《出塞》", "雪暗天山道，冰塞交河源。"], ["楊素《出塞》", "交河明月夜，陰山苦霧辰。"]], "note": "西域邊塞的極遠標記；交河、天山、陰山並置", "x": 106.0, "y": 187.2, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "從軍行", "en_title": "Ballad of Joining the Army", "line": "雲起。 庭中奇樹已堪攀，塞外征人殊未還。白雪初下天山外，浮雲直上五原間。 關山萬里不可越，誰能坐對芳菲月。流水本自斷人腸，堅", "text": "朔方烽火照甘泉，長安飛将出祁連。犀渠玉劍良家子，白馬金羁俠少年。\n平明偃月屯右地，薄暮魚麗逐左賢。谷中石虎經銜箭，山上金人曾祭天。\n天涯一去無窮已，薊門迢遞三千里。朝見馬嶺黃沙合，夕望龍城陣雲起。\n庭中奇樹已堪攀，塞外征人殊未還。白雪初下天山外，浮雲直上五原間。\n關山萬里不可越，誰能坐對芳菲月。流水本自斷人腸，堅冰舊來傷馬骨。\n邊庭節物與華異，冬霰秋霜春不歇。長風蕭蕭渡水來，歸雁連連映天沒。\n從軍行，軍行萬里出龍庭，單于渭橋今已拜，将軍何處覓功名。\n*詩\n===仰贈特進陽休之詩===（七章并序）\n 夫士之在俗，所以騰聲邁實，郁爲時宗者，厥塗有三焉：才也，位也，年也。才則弘道立言，師範雅俗；位則乘軒服冕，燮代天工；年則貳膳杖朝，緻養膠序。緬尋古始，永鑒前哲，齒曆身名，鮮能俱泰，特進陽公兼而有之矣。大齊武平之五載，抗表懸車，難進之風。首振頹俗，餘不勝嘉仰，敬贈是詩。\n幽求遂古，逖聽前聞。鴻荒眇邈，篆策絪缊。\n體國經野，爲鳥爲雲。果行毓德，或武或文。\n於铄君子，含章挺秀。龍翰鳳翼，玉榮松茂。\n逸韻孤峙，奇峰回構。慕舜匪高，希顔可陋。\n藝殚文府，學究書林。盡則窮麗，索隐鈎深。\n靈珠耀手，明鏡懸心。聲偃華裔，道冠衣簪。\n豹變其文，鴻漸於陸。入作卿士，出爲嶽牧。\n千社萬鍾，玄冕丹毂。神之聽之，介以景福。\n漢稱廣德，晉美劇陽。君亦高蹈，二此鴻芳。\n知足知止，令問令望。功遂身退，休有烈光。\n聞風伯夷，懦夫自立。祖道疏傅，行人霣泣。\n公之戾止，僚友胥集。瞻彼高山，每懷靡及。\n餘實膚陋，少不及門。挾策問道，捧帚承恩。\n以茲高義，被於後昆。式歌且舞，敢贈長言。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "飲馬長城窟行", "en_title": "Watering Horses at a Long Wall Spring", "line": "上，乘空烽火發。借問長城候，單于入朝谒。 濁氣靜天山，晨光照高阙。釋兵仍振旅，要荒事方舉。 飲至告言旋，功歸清廟前。", "text": "肅肅秋風起，悠悠行萬里。萬里何所行，橫漠築長城。\n豈台小子智，先聖之所營。樹茲萬世策，安此憶兆生。\n讵敢憚焦思，高枕於上京。北河秉武節，千里卷戎旌。\n山川互出沒，原野窮超忽。摐金止行陣，鳴鼓興士卒。\n千乘萬騎動，飲馬長城窟。秋昏塞外雲，霧暗關山月。\n緣嚴驿馬上，乘空烽火發。借問長城候，單于入朝谒。\n濁氣靜天山，晨光照高阙。釋兵仍振旅，要荒事方舉。\n飲至告言旋，功歸清廟前。"}, {"author": "無名氏（雜曲歌辭）", "en_author": "無名氏（雜曲歌辭）", "title": "摩多樓子", "en_title": "The Moduo Lad", "line": "從戎向邊北，遠行醉密親。借問陰山候，還知塞上人。", "text": "從戎向邊北，遠行醉密親。借問陰山候，還知塞上人。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "骛戎軒。懔懔邊風急，蕭蕭征馬煩。雪暗天山道，冰塞交河源。霧烽黯無色，霜旗凍不翻。耿介倚長劍，日落風塵昏。", "text": "窮秋塞莫腓，塞外胡塵飛。徵兵廣武至，候騎陰山歸。廟堂千里策，将軍百戰威。轅門臨玉帳，大旆指金微。摧朽無勍敵，應變有先機。銜枚壓曉陣，卷甲解朝圍。瀚海波瀾靜，王庭氛霧晞。鼓鼙嚴朔氣，原野曀寒晖。勳庸震邊服，歌吹入京畿。待拜長平坂，鳴驺入禮闱。\n 上将三略遠，元戎九命尊。緬懷古人節，思酬明主恩。山西多勇氣，塞北有遊魂。揚桴度隴坂，勒騎上平原。誓将絕沙漠，悠然去玉門。輕赍不遑舍，驚策骛戎軒。懔懔邊風急，蕭蕭征馬煩。雪暗天山道，冰塞交河源。霧烽黯無色，霜旗凍不翻。耿介倚長劍，日落風塵昏。"}, {"author": "楊素", "en_author": "Yang Su", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "荒塞空千里，孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮", "text": "漠南胡未空，漢将複臨戎。飛狐出塞北，碣石指遼東。冠軍臨瀚海，長平翼大風。雲橫虎落陣，氣抱龍城虹。橫行萬里外，胡運百年窮。兵寝星芒落，戰解月輪空。嚴鐎息夜鬥，骍角罷鳴弓。北風嘶朔馬，胡霜切塞鴻。休明大道暨，幽荒日用同。方就長安邸，來谒建章宮。\n 漢虜未和親，憂國不憂身。握手河梁上，窮涯北海濱。據鞍獨懷古，慷慨感良臣。曆覽多舊迹，風日慘愁人。荒塞空千里，孤城絕四鄰。樹寒偏易古，草衰恒不春。交河明月夜，陰山苦霧辰。雁飛南入漢，水流西咽秦。風霜久行役，河朔備艱辛。薄暮邊聲起，空飛胡騎塵。"}, {"author": "賀若弼", "en_author": "Heruo Bi", "title": "遺源雄詩", "en_title": "Left for Yuan Xiong", "line": "交河骠騎幕，合浦伏波營。勿使麒麟上，無我二人名。", "text": "交河骠騎幕，合浦伏波營。勿使麒麟上，無我二人名。"}], "prose_count": 0}, {"id": "shu", "zh": "蜀／成都", "en": "Shu / Chengdu", "ll": [104.1, 30.7], "poems": [["盧思道《蜀國弦》", "西蜀稱天府，由來擅沃饒。雲浮玉壘夕，日映錦城朝。 南尋九折路，東上七星橋。琴心若易解，令客豈難要。"], ["陳政《贈竇蔡二記室入蜀詩》", "昆山積良寶，大廈構衆材。馬卿委官去，鄒子背淮來。風流信多美，朝夕豫平台。逸翮獨不群，清才複遒上。六輔昔推名，二江今振響。英華雖外發，磨琢終内"]], "note": "“西蜀稱天府”；入蜀、蜀道是贈別詩的常見空間", "x": 456.4, "y": 475.7, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "蜀國弦", "en_title": "The Shu Strings", "line": "西蜀稱天府，由來擅沃饒。雲浮玉壘夕，日映錦城朝。 南尋九折路，東上七星橋。琴心", "text": "西蜀稱天府，由來擅沃饒。雲浮玉壘夕，日映錦城朝。\n南尋九折路，東上七星橋。琴心若易解，令客豈難要。"}, {"author": "盧思道", "en_author": "Lu Sidao", "title": "遊梁城詩", "en_title": "Visiting Liangthe city", "line": "沍寒初。鳥散空城夕，煙銷古樹疏。 東越嚴子陵，西蜀馬相如。修名竊所慕，長謠獨課虛。 ===從駕經大慈照寺詩=== 玄風冠東戶", "text": "揚镳曆汴浦，回扈入梁墟。漢藩文雅地，清塵暧有餘。\n賓遊多任俠，台苑盛簪裾。歎息徐公劍，悲涼鄒子書。\n亭臯落照盡，原野沍寒初。鳥散空城夕，煙銷古樹疏。\n東越嚴子陵，西蜀馬相如。修名竊所慕，長謠獨課虛。\n===從駕經大慈照寺詩===\n玄風冠東戶，内範轶西陵。大川開寶匣，福地下金繩。\n繡栭高可映，畫栱疊相承。日馭非難假，雲師本易憑。\n陽室疑停燧，陰軒類鑒冰。迥題飛星沒，長楣宿露凝。\n旌門曙光轉，辇道夕雲蒸。山隻效靈物，水若薦休徵。\n薄命叨恩紀，微軀竊自陵。優遊徒可恃，周赉永難勝。"}, {"author": "孫萬壽", "en_author": "Sun Wanshou", "title": "遠戍江南 (寄京邑親友)", "en_title": "Garrisoned in Jiangnan (Sent to Kin in the Capital)", "line": "何紏紛。驚波上濺日，喬木下臨雲。 系越恒資辯，喻蜀幾飛文。魯連唯救患，吾彥不争勳。 羁遊歲月久，歸思常搔首。非關不樹萱，豈爲", "text": "賈誼長沙國，屈平湘水濱。江南瘴疠地，從來多逐臣。\n粵餘非巧宦，少小拙謀身。欲飛無假翼，思鳴不值晨。\n如何載筆士，翻作負戈人。飄飖如木偶，葉置同刍狗。\n失路乃西浮，非狂亦東走。晚歲出函關，方春度京口。\n石城臨虎據，天津望牛鬥。牛鬥盛妖氛，枭獍已成群。\n郄超初入暮，王粲始從軍。裏糧楚山際，披甲吳江汶。\n吳江一浩蕩，楚山何紏紛。驚波上濺日，喬木下臨雲。\n系越恒資辯，喻蜀幾飛文。魯連唯救患，吾彥不争勳。\n羁遊歲月久，歸思常搔首。非關不樹萱，豈爲無杯酒。\n數載辭鄉縣，三秋別親友。壯志後風雲，衰鬓先蒲柳。\n心緒亂如絲，空懷疇昔時。昔時遊帝裏，弱歲逢知己。\n旅食南館中，飛蓋西園裏。河間本好書，東平唯愛士。\n英辯接天人，清言洞名理。鳳池時寓直，麟閣常遊止。\n勝地盛賓僚，麗景相攜招。舟泛昆明水，騎指渭津橋。\n祓除臨灞岸，供帳出東郊。宜城醞始熟，陽翟曲新調。\n繞樹烏啼夜，雊麥雉飛朝。細塵梁下落，長袖掌中嬌。\n歡娛三樂至，懷抱百憂銷。夢想猶如昨，尋思久寂寥。\n一朝牽世網，萬里逐波潮。回輪常自轉，懸旆不堪搖。\n登高視衿帶，鄉關白雲外。回首望孤城，愁人益不平。\n華亭宵鶴唳，幽谷早莺鳴。斷絕心難續，惝恍魂屢驚。\n群紀通家好，鄒魯故鄉情。若值南飛雁，時能訪死生。"}, {"author": "陳政", "en_author": "陳政", "title": "贈窦蔡二記室入蜀詩", "en_title": "Presented to Recorders Dou and Cai Entering Shu", "line": "（題）贈窦蔡二記室入蜀詩：昆山積良寶，大廈構衆材。馬卿委官去，鄒子背淮來。風流信多美，朝夕豫平台。", "text": "昆山積良寶，大廈構衆材。馬卿委官去，鄒子背淮來。風流信多美，朝夕豫平台。逸翮獨不群，清才複遒上。六輔昔推名，二江今振響。英華雖外發，磨琢終内朗。四海奮羽儀，清風久播馳。沈郁材難廁，青山翻易阻。回首望煙霞，誰知慕俦侶。飄然不系舟，爲情自可求。若奉西園夜，浩想北園愁。無因逐萍藻，從爾泛清流。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "白馬篇", "en_title": "The White Horse", "line": "七星光。山虛弓響徹，地迥角聲長。 宛河推勇氣，隴蜀擅威強。輪台受降虜，高阙翦名王。 射熊入飛觀，校獵下長楊。英名欺衛霍，智策", "text": "白馬金貝裝，橫行遼水傍。問是誰家子，宿衛羽林郎。\n文犀六屬铠，寶劍七星光。山虛弓響徹，地迥角聲長。\n宛河推勇氣，隴蜀擅威強。輪台受降虜，高阙翦名王。\n射熊入飛觀，校獵下長楊。英名欺衛霍，智策蔑平良。\n島夷時失禮，卉服犯邊疆。徵兵集薊北，輕騎出漁陽。\n進軍随日暈，挑戰逐星芒。陣移龍勢動，營開虎翼張。\n沖冠入死地，攘臂越金湯。塵飛戰鼓急，風交征旆揚。\n轉鬥平華地，追奔掃大方。本持身許國，況複武功彰。\n曾令千載後，流譽滿旂常。"}, {"author": "柳𧦬", "en_author": "Liu Bian", "title": "奉和晚日楊子江應教詩", "en_title": "In Response to 'The Setting Sun on the Yangzi,' on Instruction", "line": "大江都會所，長洲有舊名。西流控岷蜀，東泛迩蓬瀛。未睹纖羅動，先聽遠濤聲。空濛雲色晦，浃壘浪華生。欲知暮雨歇，", "text": "大江都會所，長洲有舊名。西流控岷蜀，東泛迩蓬瀛。未睹纖羅動，先聽遠濤聲。空濛雲色晦，浃壘浪華生。欲知暮雨歇，當觀飛旆輕。"}, {"author": "王胄", "en_author": "Wang Zhou", "title": "答賀屬詩", "en_title": "Answering He's Retainer", "line": "外黃初邸客，蜀郡晚琴聲。本欲從張耳，何曾說馬卿。定知遊道日，非是第如行。高文拟雜珮，善谑", "text": "外黃初邸客，蜀郡晚琴聲。本欲從張耳，何曾說馬卿。定知遊道日，非是第如行。高文拟雜珮，善谑間瑤瓊。前書言家室，末叙挂簪纓。問仁甯伐國，揚波豈亂清。聞有陽台客，常留入夢情。無爲嗟獨割，空引助庖名。\n===卧疾閩越述淨名意詩===（并序）\n 余卧疾閩海，彌留旬朔。善友颙法師，勸余以淨名妙典調伏身心。力疾粗陳其意，敬簡法師云爾。\n 客行萬餘里，眇然滄海上。五嶺常炎郁，百越多山瘴。兼以勞形神，遂此嬰疲恙。桐雷邈已遠，砭石良難訪。抱影私自憐，沾襟獨惆怅。毗城有長者，生平夙所尚。復藉大因緣，勉以深回向。心路資調伏，於焉念實相。水沫本難摩，幹城空有狀。是生非至理，是我皆虛妄。求之不可得，誰其受業障。信矣大醫王，茲力誠難量。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "賦得石詩", "en_title": "Set Topic: Stone", "line": "蜀門郁遐阻，燕碣遠參差。獨标千丈峻，共起百重危。鏡峰含月魄，蓋嶺逼雲枝。徒然", "text": "蜀門郁遐阻，燕碣遠參差。獨标千丈峻，共起百重危。鏡峰含月魄，蓋嶺逼雲枝。徒然抱貞介，填海竟誰知。"}, {"author": "虞世南", "en_author": "Yu Shinan", "title": "奉和幸江都應诏詩", "en_title": "In Response to 'The Visit to Jiangdu,' by Imperial Command", "line": "川途。封唐昔敷錫，分陝被荊吳。沐道鹹知讓，慕義久成都。冬律初飛管，陽鳥正銜蘆。嚴飚肅林薄，暧景澹江湖。鴻私浃幽遠，厚澤潤凋枯", "text": "南國行周北，稽山秘夏圖。百王豈殊軌，千載協前谟。肆觐遵時豫，順動悅來蘇。安流進玉舳，戒道翼金吾。龍旂煥辰象，鳳吹溢川途。封唐昔敷錫，分陝被荊吳。沐道鹹知讓，慕義久成都。冬律初飛管，陽鳥正銜蘆。嚴飚肅林薄，暧景澹江湖。鴻私浃幽遠，厚澤潤凋枯。虞琴起歌詠，漢築動巴歈。多幸沾行葦，無庸類散樗。"}, {"author": "孔德紹", "en_author": "Kong Deshao", "title": "送蔡君知-入蜀詩二首", "en_title": "Farewell to Cai Junzhi Entering Shu, Two Poems", "line": "忽背飛。失路遠相送，他鄉何日歸。  靈關九折險，蜀道二星遙。乘楂若有便，希泛廣陵潮。", "text": "金陵已去國，銅梁忽背飛。失路遠相送，他鄉何日歸。\n 靈關九折險，蜀道二星遙。乘楂若有便，希泛廣陵潮。"}], "prose_count": 28}, {"id": "guilin", "zh": "桂林／嶺南", "en": "Guilin / Lingnan", "ll": [110.3, 25.3], "poems": [["釋玄逵《言離廣府還望桂林去留愴然自述贈懷詩》", "标心之梵宇，運想入仙洲。嬰痼乖同好，沈情阻若抽。葉落乍難聚，情離不可收。何日乘杯至，詳觀演去流。"]], "note": "嶺南貶謫/流寓空間；“還望桂林”寫去留之際", "x": 605.2, "y": 602.3, "hits": [{"author": "盧思道", "en_author": "Lu Sidao", "title": "有所思", "en_title": "Something on My Mind", "line": "深。 怨歌裁潔素，能賦受黃金。複聞隔湘水，猶言限桂林。 凄凄日已暮，誰見此時心。", "text": "長門與長信，憂思并難任。洞房明月下，空庭綠草深。\n怨歌裁潔素，能賦受黃金。複聞隔湘水，猶言限桂林。\n凄凄日已暮，誰見此時心。"}, {"author": "王胄", "en_author": "Wang Zhou", "title": "賦得雁送別周員外戍嶺表詩", "en_title": "Set Topic: Geese — Farewell to Zhou Bound for Lingbiao", "line": "（題）賦得雁送別周員外戍嶺表詩：旅雁別衡陽，天寒關路長。行斷由驚箭，聲嘶爲犯霜。罹繳無人憫，能鳴反自傷。", "text": "旅雁別衡陽，天寒關路長。行斷由驚箭，聲嘶爲犯霜。罹繳無人憫，能鳴反自傷。何如侶泛泛，刷羽戲方塘。"}, {"author": "釋玄逵", "en_author": "Monk Xuankui", "title": "言離廣府還望桂林去留怆然自述贈懷詩", "en_title": "Leaving Guangzhou, Gazing Back at Guilin, Mixed Feelings", "line": "（題）言離廣府還望桂林去留怆然自述贈懷詩：标心之梵宇，運想入仙洲。嬰痼乖同好，沈情阻若抽。葉落乍難聚，情離不可收。", "text": "标心之梵宇，運想入仙洲。嬰痼乖同好，沈情阻若抽。葉落乍難聚，情離不可收。何日乘杯至，詳觀演去流。"}, {"author": "楊素", "en_author": "Yang Su", "title": "贈薛内史詩", "en_title": "Presented to Secretary Xue", "line": "自芳。別離望南浦，相思在漢陽。漢陽隔隴岑，南浦達桂林。山川雖未遠，無由得寄音。", "text": "耿耿不能寐，京洛久離群。橫琴還獨坐，停杯遂待君。待君春草歇，獨坐秋風發。朝朝唯落花，夜夜空明月。明月徒流光，落花空自芳。別離望南浦，相思在漢陽。漢陽隔隴岑，南浦達桂林。山川雖未遠，無由得寄音。"}, {"author": "楊素", "en_author": "Yang Su", "title": "贈薛播州詩（十四章）", "en_title": "Presented to Xue of Bozhou, Fourteen Poems", "line": "秋風起。岘山君傥遊，淚落應無已。  漢陰政已成，嶺表人猶蠹。彈冠比方新，還珠總如故。楚人結去思，越俗歌來暮。陽烏尚歸飛，別鶴", "text": "在昔天地閉，品物屬屯蒙。和平替王道，哀怨結人風。麟傷世已季，龍戰道将窮。亂海飛群水，貫日引長虹。幹戈異革命，揖讓非至公。\n 兩河定寶鼎，八水域神州。函關絕無路，京洛化爲丘。漳滏爾連沼，泾渭餘別流。生郊滿戎馬，涉路起風牛。班荊疑莫遇，贈缟竟無由。\n 五緯連珠聚，千載濁河清。金亡潛虎質，閏盡自蛙聲。聖期伊旦暮，天祿啓炎精。霧生三日重，星飛五老輕。禋宗答上帝，改物創群生。\n 道昏雖已朗，政故猶未新。刳舟洹水濟，結網大川濱。出遊迎釣叟，入夢訪幽人。植林離各樹，開榮豈異春。相逢一時泰，共幸百年身。\n 有帛贲丘園，生刍自幽谷。塵芳金馬路，瀾清鳳池澳。零露既垂光，清風複流穆。傾蓋如舊知，彈冠豈新沭。利心金各斷，芬言蘭共馥。\n 自餘曆端揆，緝熙恧時彥。及爾陪帷幄，出納先天眷。高調發清音，缛藻流馀絢。或如彼金玉，歲暮無凋變。餘松待爾心，爾筠留我箭。\n 荏苒積歲時，契闊同遊處。阊阖既趨朝，承明還宴語。上林陪羽獵，甘泉侍清曙。迎風含暑氣，飛雨凄寒序。相顧惜光陰，留情共延伫。\n 滔滔彼江漢，實爲南國紀。作牧求明德，若人應斯美。高卧未褰帷，飛聲已千里。還望白雲天，日暮秋風起。岘山君傥遊，淚落應無已。\n 漢陰政已成，嶺表人猶蠹。彈冠比方新，還珠總如故。楚人結去思，越俗歌來暮。陽烏尚歸飛，別鶴還回顧。君見南枝巢，應思北風路。\n 北風吹故林，秋聲不可聽。雁飛窮海寒，鶴唳霜臯淨。含毫心未傳，聞音路猶敻。唯有孤城月，徘徊獨臨映。吊影餘自憐，安知我疲病。\n 養病願歸閑，居榮在知足。栖遲茂陵下，優遊滄海曲。古人情可見，今人遵路躅。荒居接野窮，心物俱非俗。桂樹芳叢生，山幽竟何欲。\n 所欲栖一枝，禀分豐諸已。園樹避鳴蟬，山梁過雌雉。野陰冒叢灌，幽氣含蘭芷。悲哉暮秋別，春草複萋矣。鳴琴久不聞，屬聽空流水。\n 秋水魚遊日，春樹鳥鳴時。濠梁暮共往，幽谷有相思。千里悲無駕，一見杳難期。山河散瓊蕊，庭樹下丹滋。物華不相待，遲暮有馀悲。\n 銜悲向南浦，寒色黯沈沈。風起洞庭險，煙生雲夢深。獨飛時慕侶，寡和乍孤音。木落悲時暮，時暮感離心。離心多苦調，讵假雍門琴。"}], "prose_count": 4}, {"id": "hengyang", "zh": "衡陽", "en": "Hengyang", "ll": [112.6, 26.9], "poems": [["虞世基《衡陽王齋閣奏妓詩》", "金溝低禦道，玉管正吟風。拾翠天津上，回鸾鳥路中。鏡前看月近，歌處覺塵空。今宵織女見，言是望仙宮。"], ["王胄《賦得雁送別周員外戍嶺表詩》", "旅雁別衡陽，天寒關路長。"]], "note": "雁與嶺表：南方戍邊的詩意地標", "x": 660.4, "y": 564.8, "hits": [{"author": "王胄", "en_author": "Wang Zhou", "title": "賦得雁送別周員外戍嶺表詩", "en_title": "Set Topic: Geese — Farewell to Zhou Bound for Lingbiao", "line": "旅雁別衡陽，天寒關路長。行斷由驚箭，聲嘶爲犯霜。罹繳無人憫，能鳴反自傷。何如侶泛泛", "text": "旅雁別衡陽，天寒關路長。行斷由驚箭，聲嘶爲犯霜。罹繳無人憫，能鳴反自傷。何如侶泛泛，刷羽戲方塘。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "衡陽王齋閣奏妓詩", "en_title": "Entertainers Perform in the Hengyang Prince's Studio", "line": "（題）衡陽王齋閣奏妓詩：金溝低禦道，玉管正吟風。拾翠天津上，回鸾鳥路中。鏡前看月近，歌處覺塵空。", "text": "金溝低禦道，玉管正吟風。拾翠天津上，回鸾鳥路中。鏡前看月近，歌處覺塵空。今宵織女見，言是望仙宮。"}], "prose_count": 2}, {"id": "longtou", "zh": "隴頭／隴坂", "en": "Longtou", "ll": [106.3, 34.9], "poems": [["薛道衡《出塞》", "塵沙塞下暗，風月隴頭寒。"], ["虞世基《出塞》", "揚桴度隴阪，勒騎上平原。"]], "note": "隴山、隴坂：由關中西出塞外的第一道門檻", "x": 509.2, "y": 377.2, "hits": [{"author": "馬敞", "en_author": "馬敞", "title": "嘲牛弘", "en_title": "Mocking Niu Hong", "line": "嘗聞隴西牛，千石不用軥。今見隴西牛，卧地打草頭。", "text": "嘗聞隴西牛，千石不用軥。今見隴西牛，卧地打草頭。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "白馬篇", "en_title": "The White Horse", "line": "劍七星光。山虛弓響徹，地迥角聲長。 宛河推勇氣，隴蜀擅威強。輪台受降虜，高阙翦名王。 射熊入飛觀，校獵下長楊。英名欺衛霍，智", "text": "白馬金貝裝，橫行遼水傍。問是誰家子，宿衛羽林郎。\n文犀六屬铠，寶劍七星光。山虛弓響徹，地迥角聲長。\n宛河推勇氣，隴蜀擅威強。輪台受降虜，高阙翦名王。\n射熊入飛觀，校獵下長楊。英名欺衛霍，智策蔑平良。\n島夷時失禮，卉服犯邊疆。徵兵集薊北，輕騎出漁陽。\n進軍随日暈，挑戰逐星芒。陣移龍勢動，營開虎翼張。\n沖冠入死地，攘臂越金湯。塵飛戰鼓急，風交征旆揚。\n轉鬥平華地，追奔掃大方。本持身許國，況複武功彰。\n曾令千載後，流譽滿旂常。"}, {"author": "楊廣（隋煬帝）", "en_author": "Emperor Yang of Sui (Yang Guang)", "title": "江都宮樂歌", "en_title": "Song of the Jiangdu Palace", "line": "處可淹留，台榭高明複好遊。風亭芳樹迎早夏，長臯麥隴送馀秋。 渌潭桂楫浮青雀，果下金鞍躍紫骝。綠觞素蟻流霞飲，長袖清歌樂戲州。", "text": "揚州舊處可淹留，台榭高明複好遊。風亭芳樹迎早夏，長臯麥隴送馀秋。\n渌潭桂楫浮青雀，果下金鞍躍紫骝。綠觞素蟻流霞飲，長袖清歌樂戲州。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "人節，思酬明主恩。山西多勇氣，塞北有遊魂。揚桴度隴坂，勒騎上平原。誓将絕沙漠，悠然去玉門。輕赍不遑舍，驚策骛戎軒。懔懔邊風急", "text": "窮秋塞莫腓，塞外胡塵飛。徵兵廣武至，候騎陰山歸。廟堂千里策，将軍百戰威。轅門臨玉帳，大旆指金微。摧朽無勍敵，應變有先機。銜枚壓曉陣，卷甲解朝圍。瀚海波瀾靜，王庭氛霧晞。鼓鼙嚴朔氣，原野曀寒晖。勳庸震邊服，歌吹入京畿。待拜長平坂，鳴驺入禮闱。\n 上将三略遠，元戎九命尊。緬懷古人節，思酬明主恩。山西多勇氣，塞北有遊魂。揚桴度隴坂，勒騎上平原。誓将絕沙漠，悠然去玉門。輕赍不遑舍，驚策骛戎軒。懔懔邊風急，蕭蕭征馬煩。雪暗天山道，冰塞交河源。霧烽黯無色，霜旗凍不翻。耿介倚長劍，日落風塵昏。"}, {"author": "虞世基", "en_author": "Yu Shiji", "title": "入關詩", "en_title": "Entering the Pass", "line": "隴雲低不散，黃河咽複流。關山多道裏，相接幾重愁。", "text": "隴雲低不散，黃河咽複流。關山多道裏，相接幾重愁。"}, {"author": "楊素", "en_author": "Yang Su", "title": "贈薛内史詩", "en_title": "Presented to Secretary Xue", "line": "流光，落花空自芳。別離望南浦，相思在漢陽。漢陽隔隴岑，南浦達桂林。山川雖未遠，無由得寄音。", "text": "耿耿不能寐，京洛久離群。橫琴還獨坐，停杯遂待君。待君春草歇，獨坐秋風發。朝朝唯落花，夜夜空明月。明月徒流光，落花空自芳。別離望南浦，相思在漢陽。漢陽隔隴岑，南浦達桂林。山川雖未遠，無由得寄音。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "出塞二首", "en_title": "Going Out of the Pass, Two Poems", "line": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳", "text": "高秋白露團，上将出長安。塵沙塞下暗，風月隴頭寒。轉蓬随馬足，飛霜落劍端。凝雲迷代郡，流水凍桑乾。烽微桔槔遠，橋峻辘轳難。從軍多惡少，召募盡材官。伏堤時卧鼓，疑兵乍解鞍。柳城擒冒頓，長坂納呼韓。受降今更築，燕然已重刊。還嗤傅介子，辛苦刺樓蘭。\n 邊庭烽火驚，插羽夜徵兵。少昊騰金氣，文昌動将星。長驅鞮汗北，直指夫人城。絕漠三秋暮，窮陰萬里生。寒夜哀笛曲，霜天斷雁聲。連旗下鹿塞，疊鼓向龍庭。妖雲墜虜陣，暈月繞胡營。左賢皆頓颡，單于已系纓。绁馬登玄阙，鈎鲲臨北溟。當知霍骠騎，高第起西京。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "奉和月夜聽軍樂應诏詩", "en_title": "In Response to 'Listening to Military Music on a Moonlit Night,' by Imperial Command", "line": "秋夜，山寒落夏霜。遙空澄暮色，清景散馀光。笳聲喧隴水，鼓曲噪漁陽。沈郁興神思，眺聽發天章。嵩岱終難學，丘陵徒自強。", "text": "旌門臨古堞，徼道度深隍。月冷疑秋夜，山寒落夏霜。遙空澄暮色，清景散馀光。笳聲喧隴水，鼓曲噪漁陽。沈郁興神思，眺聽發天章。嵩岱終難學，丘陵徒自強。"}, {"author": "薛道衡", "en_author": "Xue Daoheng", "title": "和許給事善心戲場轉韻詩", "en_title": "Matching Supervising Secretary Xu Shanxin's Rhyme-Shifting at the Show", "line": "魚負燈，徹夜龍銜燭。歡笑無窮已，歌詠還相續。羌笛隴頭吟，胡舞龜茲曲。假面飾金銀，盛服搖珠玉。宵深戲未闌，兢爲人所難。卧驅飛玉", "text": "京洛重新年，複屬月輪圓。雲間璧獨轉，空裏鏡孤懸。萬方皆集會，百戲盡來前。臨衢車不絕，夾道閣相連。驚鴻出洛水，翔鶴下伊川。豔質回風雪，笙歌韻管弦。佳麗俨成行，相攜入戲場。衣類何平叔，人同張子房。高高城裏髻，峨峨樓上妝。羅裙飛孔雀，绮帶垂鴛鴦。月映班姬扇，風飄韓壽香。竟夕魚負燈，徹夜龍銜燭。歡笑無窮已，歌詠還相續。羌笛隴頭吟，胡舞龜茲曲。假面飾金銀，盛服搖珠玉。宵深戲未闌，兢爲人所難。卧驅飛玉勒，立騎轉銀鞍。縱橫既躍劍，揮霍複跳丸。抑揚百獸舞，盤跚五禽戲。狻猊弄斑足，巨象垂長鼻。青羊跪複跳，白馬回旋騎。忽睹羅浮起，俄看郁昌至。峰嶺既崔嵬，林叢亦青翠。麋鹿下騰倚，猴猿或蹲跂。金徒列舊刻，玉律動新灰。甲荑垂陌柳，殘花散苑梅。繁星漸寥落，斜月尚徘徊。王孫猶勞戲，公子未歸來。共酌瓊酥酒，同傾鹦鹉杯。普天逢聖日，兆庶喜康哉。"}], "prose_count": 18}], "route": [{"id": "daxing", "zh": "大興（長安）", "en": "Daxing", "place": "changan", "poem": "楊廣《還京師詩》：“東都禮儀舉，西京冠蓋歸。”"}, {"id": "luoyang", "zh": "洛陽（東都）", "en": "Luoyang", "place": "luoyang", "poem": "楊廣《還京師詩》：“東都禮儀舉，西京冠蓋歸。”"}, {"id": "bian", "zh": "汴州／隋堤", "en": "Bianzhou", "place": "suiwei", "poem": "虞世基《汴水早發應令詩》：“銮跸臨河濟，裘冕肅柴禋。”"}, {"id": "huai", "zh": "淮水", "en": "Huai River", "place": "huai", "poem": "楊廣《早渡淮詩》：“平淮既淼淼，曉霧復霏霏。”"}, {"id": "jiangdu", "zh": "江都（揚州）", "en": "Jiangdu", "place": "jiangdu", "poem": "楊廣《江都宮樂歌》：“揚州舊處可淹留，台榭高明復好遊。”"}], "density": [["大興（長安）", 6], ["洛陽／東都", 2], ["并州／晉陽", 2], ["塞外", 4], ["突厥／漠北", 3], ["玉門", 1], ["幽州／涿郡", 1], ["隋堤／汴水", 2], ["淮水", 1], ["江都／揚州", 7], ["江南／建康", 2], ["江陵", 1], ["遼東／高麗", 3], ["淮陽", 1], ["王澤嶺", 1], ["渭源／隴右", 3], ["雲中／定襄", 1], ["瀚海／燕然", 3], ["交河／天山", 2], ["蜀／成都", 2], ["桂林／嶺南", 1], ["衡陽", 2], ["隴頭／隴坂", 2]], "titles_en": {"一三五七九言詩": "One-Three-Five-Seven-Nine Syllable Poem", "七夕詩": "the Seventh Night Poem", "七夕詩二首": "the Seventh Night Poem, Two Poems", "上壽歌": "Toast Song", "上已禊飲詩": "Drinking at the Lustration Festival", "于阗采花": "Gathering Flowers in Khotan", "五言詩": "Five-Character Poem", "五郊歌五首·白帝歌商音": "Five Suburbs Songs · White Emperor (shang note)", "五郊歌五首·赤帝歌徵音": "Five Suburbs Songs · Red Emperor (zhi note)", "五郊歌五首·青帝歌角音": "Five Suburbs Songs · Green Emperor (jue note)", "五郊歌五首·黃帝歌宮音": "Five Suburbs Songs · Yellow Emperor (gong note)", "五郊歌五首·黑帝歌羽音": "Five Suburbs Songs · Black Emperor (yu note)", "京洛篇": "The Capitals", "人日思歸詩": "Longing for Home on the Seventh Day", "侍宴東宮應令詩": "Attending a Banquet in the Eastern Palace", "侍皇太子宴應令詩": "Attending the Crown Prince's Banquet", "元會大飨歌四首·皇夏": "Great Assembly Feast Songs · Huangxia", "元會大飨歌四首·肆夏": "Great Assembly Feast Songs · Sixia", "入塞": "Entering the Pass", "入山詩": "Entering the mountain", "入郴江詩": "Entering the Chen River", "入關詩": "Entering the Pass", "冬夜詩": "Winter Night", "冬至乾陽殿受朝詩": "Receiving Homage in the Qianyang Hall at Winter Solstice", "凱樂歌辭三首·述天下太": "Triumph Songs · Telling of Grand Peace", "凱樂歌辭三首·述帝德": "Triumph Songs · Telling of Imperial Virtue", "凱樂歌辭三首·述諸軍用命": "Triumph Songs · Telling of the Armies' Service", "出塞": "Going Out of the Pass", "出塞二首": "Going Out of the Pass, Two Poems", "初夏應诏詩": "Early Summer, by Imperial Command", "初渡江詩": "First Crossing of the River", "初發東都應诏詩": "Setting Out from the Eastern Capital, by Imperial Command", "別周記室詩": "Parting with Recorder Zhou", "別宋常侍詩": "Parting with Attendant Song", "別贈詩": "Parting Gift", "劉炫引諺論政敝": "Liu Xuan's Proverb on the Failings of Government", "劉生": "Liu Sheng", "北鄉古松樹詩": "The Old Pine of Beixiang", "十索二首": "Ten Requests, Two Poems", "十索四首": "Ten Requests, Four Poems", "升天行": "Ascending to Heaven", "南土人爲牡蛎語": "Southern Saying on Oysters", "南隐遊泉山詩": "Visiting the Spring Mountain as a Southern Recluse", "古歌": "Old Song", "和入京詩": "Matching 'Entering the Capital'", "和初春宴東堂應令詩": "Matching “early springbanquetthe East Hallby princely command”", "和孔侍郎觀太常新奏樂詩": "Matching Vice-Minister Kong's 'Watching the New Music at the Court of Ceremonials'", "和平涼公觀趙郡王妓詩": "Matching the Duke of Pingliang's 'Watching the Zhao Prince's Entertainers'", "和張丞奉诏於江都望京口詩": "Matching Assistant Zhang's 'Gazing at Jingkou from Jiangdu'", "和琳法師初春法集之作詩": "Matching Master Lin's Piece at the Early Spring Dharma Gathering", "和盧贊府遊紀國道場詩": "Matching Registrar Lu's 'Visiting the Jiguo Sanctuary'", "和許給事善心戲場轉韻詩": "Matching Supervising Secretary Xu Shanxin's Rhyme-Shifting at the Show", "和趙郡王觀妓應教詩": "Matching the Zhao Prince's 'Watching the Entertainers,' on Instruction", "喜春遊歌二首": "Joy of Spring Outing, Two Songs", "嘲牛弘": "Mocking Niu Hong", "四時白纻歌二首·東宮春": "White Ramie Songs of the Four Seasons · East Palace in Spring", "四時白纻歌二首·江都夏": "White Ramie Songs of the Four Seasons · Jiangdu in Summer", "四時白纻歌二首·長安秋": "White Ramie Songs of the Four Seasons · Chang'an in Autumn", "因故人歸作詩": "Composed on the Occasion of an Old Friend's Return", "園中雜詠橘樹詩": "Miscellaneous Garden Verse on the Orange Trees", "園樹有巢鵲戲以詠之": "Playfully Composed on a Magpie Nesting in the Garden Trees", "圜丘歌八首·文舞": "Circular Mound Songs · Civil Dance", "圜丘歌八首·昭夏": "Circular Mound Songs · Zhaoxia", "圜丘歌八首·武舞": "Circular Mound Songs · Martial Dance", "圜丘歌八首·登歌": "Circular Mound Songs · Ascension Song", "圜丘歌八首·皇夏": "Circular Mound Songs · Huangxia", "圜丘歌八首·諴夏": "Circular Mound Songs · Xianxia", "圜丘歌八首·需夏": "Circular Mound Songs · Xuxia", "在南接北使詩": "In the South, Receiving the Northern Envoys", "在陳釋奠金石會應令詩": "At Chen: the Metal-and-Stone School Sacrifice, by Princely Command", "城南隅燕": "Banquet in the City's South Corner", "夏日臨江詩": "By the River in Summer", "夏日詩": "summerday Poem", "夏晚詩": "Late Summer Evening", "夜作巫山詩": "Composed at Night on Mount Wu", "夜宿荒村詩": "Lodging at Night in a Deserted Village", "大射登歌": "Grand Archery Ascension Song", "大業中童謠": "Children's Rhyme of the Daye Era", "大業長白山謠": "Changbai Mountain Rhyme of the Daye Era", "太廟樂歌九首·登歌": "Ancestral Temple Songs · Ascension Song", "太廟樂歌九首·皇曾祖康王神室歌": "Ancestral Temple Songs · Shrine of Prince Kang, the Great-Grandfather", "太廟樂歌九首·皇祖獻王神室歌": "Ancestral Temple Songs · Shrine of Prince Xian, the Grandfather", "太廟樂歌九首·皇考太祖武元皇帝神室歌": "Ancestral Temple Songs · Shrine of Emperor Wuyuan, the Father", "太廟樂歌九首·皇高祖太原府君神室歌": "Ancestral Temple Songs · Shrine of the Taiyuan Lord, the High Ancestor", "太廟樂歌九首·迎神歌": "Ancestral Temple Songs · Welcoming the Spirits", "太廟樂歌九首·送神歌": "Ancestral Temple Songs · Seeing Off the Spirits", "太真夫人贈馬明生詩二首": "Lady Taizhen's Poems for Ma Mingsheng, Two Poems", "奉和冬至乾陽殿受朝應诏詩": "In Response to 'Receiving Homage in the Qianyang Hall at the Winter Solstice,' by Imperial Command", "奉和出颍至淮應令詩": "In Response to 'From the Ying to the Huai,' by Princely Command", "奉和周趙王詠石詩": "In Response to the Zhou Prince of Zhao's 'On a Stone'", "奉和幸太原辇上作應诏詩": "In Response to 'Composed on the Imperial Carriage at Taiyuan,' by Imperial Command", "奉和幸江都應诏詩": "In Response to 'The Visit to Jiangdu,' by Imperial Command", "奉和從叔光祿愔元日早朝詩": "In Response to Uncle Guanglu Yin's 'New Year's Morning Audience'", "奉和御製夜觀星示百僚詩": "In Response to the Imperially Composed 'Watching the Stars at Night, for the Hundred Officials'", "奉和御製月夜觀星示百僚詩": "In Response to the Imperially Composed 'Watching the Stars on a Moonlit Night'", "奉和悲秋應令詩": "In Response to 'Sorrows of Autumn,' by Princely Command", "奉和方山靈岩寺應教詩": "In Response to “Mount FangLingyan Monasteryon instruction” by Imperial Command", "奉和春日臨渭水應令詩": "In Response to “springbythe Weiby princely command” by Imperial Command", "奉和晚日楊子江應制詩": "In Response to 'The Setting Sun on the Yangzi,' by Imperial Command", "奉和晚日楊子江應教詩": "In Response to 'The Setting Sun on the Yangzi,' on Instruction", "奉和月夜聽軍樂應诏詩": "In Response to 'Listening to Military Music on a Moonlit Night,' by Imperial Command", "奉和望海詩": "In Response to “Gazing at the sea” by Imperial Command", "奉和獻歲燕宮臣詩": "In Response to 'The New Year Banquet for the Palace Ministers'", "奉和禦制月夜觀星示百僚詩": "In Response to the Imperially Composed 'Watching the Stars on a Moonlit Night'", "奉和臨渭源應诏詩": "In Response to “By the Source of the Weiby imperial command” by Imperial Command", "奉和賜詩": "In Response to “bestowed on” by Imperial Command", "奉和賜酺詩": "In Response to “the imperial feast” by Imperial Command", "奉和通衢建燈應教詩": "In Response to “the thoroughfarelanternson instruction” by Imperial Command", "奉和還京師詩": "In Response to 'Returning to the Capital'", "奉敕於太常寺修正古樂詩": "By Imperial Decree: Revising the Old Music at the Court of Ceremonials", "妝成詩": "Finished Making Up", "委靡辭": "Languid Words", "媱泆曲": "Wanton Song", "季秋觀海詩": "Viewing the Sea in Late Autumn", "宴東堂詩": "Banquet with the East Hall", "宴秦孝王于并州作詩": "Banquet for Prince Qinxiao at Bingzhou", "宴群臣登歌": "Ascension Song at the Banquet of Ministers", "寄阮郎詩": "Sent to Ruan Lang", "小山詩": "Poem of the Little Hill", "展敬上鳳林寺詩": "Paying Respects at Fenglin Monastery", "山齋獨坐贈薛内史詩二首": "Sitting Alone in the Mountain Study, Presented to Secretary Xue, Two Poems", "巢王座韻得餘詩": "At Prince Chao's, Drawing the Rhyme Yu", "巫山高": "Lofty Mount Wu", "幸江都作詩": "Composed on a Visit to Jiangdu", "幽州爲盧昌衡盧思道語": "Youzhou Saying on Lu Changheng and Lu Sidao", "張麗英石鼓歌": "Zhang Liying's Stone Drum Song", "彭城王挽歌": "Dirge for the Prince of Pengcheng", "後園宴詩": "Banquet in the Rear Garden", "從軍行": "Ballad of Joining the Army", "從駕天池應诏詩": "Accompanying the Imperial Procession to Heavenly Poolby imperial command", "從駕幸晉陽詩": "Accompanying the Imperial Visit to Jinyang", "從駕還京詩": "Accompanying the Imperial Return to the Capital", "恙妪詩": "The Ailing Old Woman", "悲秋詩": "Sorrows of Autumn", "悼亡詩": "Mourning My Wife", "悼歎詩": "Mourning with Sighs", "愛妾換馬": "Trading a Beloved Concubine for a Horse", "感帝歌·諴夏": "Song of the Responsive Emperor · Xianxia", "憶情人詩": "Remembering My Love", "成連": "Cheng Lian", "戲拟四愁聊題兩絕詩": "Playfully Imitating the Four Sorrows, Two Quatrains", "戲題方圓動靜四字詩": "Playfully Writing the Four Characters Fang-Yuan-Dong-Jing", "扈謙詩二首": "Hu Qian's Poems, Two Poems", "挾瑟歌": "Holding the Zither", "摩多樓子": "The Moduo Lad", "敦煌樂二首": "Dunhuang Music, Two Songs", "敬酬楊仆射山齋獨坐詩": "Respectfully Replying to Vice-Director Yang's 'Sitting Alone in the Mountain Study'", "文中子夢顔子援琴歌": "Wenzhongzi's Dream: Yan Hui Plays the Zither", "文武舞歌二首·文舞歌": "Civil and Martial Dance Songs · Civil Dance", "文武舞歌二首·武舞歌": "Civil and Martial Dance Songs · Martial Dance", "方丘歌四首·昭夏": "Square Mound Songs · Zhaoxia", "方丘歌四首·登歌": "Square Mound Songs · Ascension Song", "方丘歌四首·諴夏": "Square Mound Songs · Xianxia", "於冬日普光寺卧疾值雪簡諸舊遊詩": "Lying Ill at Puguang Monastery in Winter Snow: A Note to Old Friends", "於太常寺聽陳國蔡子元所校正聲樂詩": "At the Court of Ceremonials, Listening to the Music Corrected by Cai Ziyuan of Chen", "於婺州被囚詩": "Imprisoned in Wuzhou", "於邢邵座賦詩": "Composed at Xing Shao's Gathering", "日出東南隅行": "Sunrise in the Southeast Corner", "早渡淮詩": "Crossing the Huai at Dawn", "早發揚州還望鄉邑詩": "Leaving Yangzhou at Dawn, Gazing Toward Home", "昔昔鹽": "Night by Night", "星名": "Star Names", "春夕經行留侯墓詩": "Passing the Tomb of the Marquis of Liu on a Spring Evening", "春日看梅詩二首": "Viewing Plum Blossoms in Spring, Two Poems", "春江花月夜二首": "Spring River, Flowers, Moon, Night, Two Poems", "昭君詞": "Zhaojun, a Lyric", "昭君辭": "Zhaojun, a Lyric", "時人爲保妥蕭昚語": "Saying of the Time on Baotuo Xiao Shen", "時人爲劉昉鄭譯語": "Saying of the Time on Liu Fang and Zheng Yi", "時人爲崔儦李若語": "Saying of the Time on Cui Biao and Li Ruo", "時人爲庫狄士文語": "Saying of the Time on Kudi Shiwen", "晚春詩": "Late Spring", "晚飛烏詩": "The Late-Flying Crow", "暮秋望月示學士各釋愁應教": "Late Autumn Moon-Gazing, for the Academicians to Dispel Their Sorrows, on Instruction", "書屏風詩": "Written on a Screen", "月夜觀星詩": "Watching the Stars on a Moonlit Night", "有所思": "Something on My Mind", "望海詩": "Gazing at the Sea", "朝日夕月歌二首·夕月諴夏": "Sun and Moon Songs · Evening Moon", "朝日夕月歌二首·朝日諴夏": "Sun and Moon Songs · Morning Sun", "李仙君歌": "Song of the Immortal Lord Li", "東征歌": "Song of the Eastern Campaign", "東歸在路率爾成詠詩": "On the Road Home, Composed Offhand", "東海懸崖題詩": "Inscribed on a Cliff by the Eastern Sea", "東飛伯勞歌": "The Shrike Flies East", "柳彧上表引歌謠": "The Ballad Cited in Liu Yu's Memorial", "梅夏應教詩": "plum blossomssummeron instruction Poem", "棗下何纂纂二首": "How the Jujubes Cluster, Two Songs", "棹歌行": "Song of the Oars", "楊叛兒曲": "Song of the Yang Lad", "樂平長公主挽歌": "Dirge for Princess Leping", "樂部曹觀樂詩": "Watching the Music at the Music Section", "正月十五日于通衢建燈夜升南樓詩": "On the Fifteenth, Ascending the South Tower Amid Lanterns on the Thoroughfare", "步虛詞二首": "Pacing the Void, Two Poems", "武夷君人間可哀之曲": "The Lord of Wuyi's Song of Mortal Sorrow", "歲窮應教詩": "Year's End, on Instruction", "江都宮樂歌": "Song of the Jiangdu Palace", "江陵女歌": "Song of a Jiangling Girl", "汨羅土人爲屈原歌": "Miluo Folk Song for Qu Yuan", "汴水早發應令詩": "Setting Out on the Bian River at Dawn, by Princely Command", "沐浴子": "The Bather", "河曲遊": "River Bend Excursion", "河邊枯樹詩": "The Withered Tree by the River", "泛龍舟": "Riding the Dragon Boat", "渡北河詩": "Crossing the Northern River", "澤雉": "Pheasant in the Marsh", "炀帝夢二豎子歌": "The Emperor's Dream: Song of Two Youths", "炀帝幸江南時聞民歌": "Folk Song Heard on the Emperor's Visit to Jiangnan", "炀帝時并州童謠": "Bingzhou Children's Rhyme of Emperor Yang's Time", "炀帝時童謠": "Children's Rhyme of Emperor Yang's Time", "燕歌行": "Song of Yan", "爲寒床婦贈夫婦詩": "For the Cold-Bed Wife: A Gift to a Husband", "猗蘭操": "The Orchid Exercise", "獻歲燕宮臣詩": "New Year Banquet for the Palace Ministers", "王劭引枯樹歌": "The Withered-Tree Song Cited by Wang Shao", "王子思歸歌": "The Prince's Song of Homesickness", "王昭君": "Wang Zhaojun", "王澤嶺遭洪水詩": "Caught in the Flood at Wangze Ridge", "玩雪詩": "Enjoying the Snow", "登白馬山護明寺詩": "Ascending White Horse MountainHumming Monastery", "白馬篇": "The White Horse", "皇后房内歌": "Song Within the Empress's Chamber", "相州百姓爲樊叔略語": "Xiangzhou Folk Saying on Fan Shulue", "相逢狹路間": "Meeting on a Narrow Road", "短歌行": "Short Song", "石城山": "stonethe citythe mountain", "社稷歌四首·春祈社諴夏": "Soil and Grain Songs · Spring Prayer to the Altar of Soil", "社稷歌四首·春祈稷諴夏": "Soil and Grain Songs · Spring Prayer to the Altar of Grain", "社稷歌四首·秋報社諴夏": "Soil and Grain Songs · Autumn Offering to the Altar of Soil", "社稷歌四首·秋報稷諴夏": "Soil and Grain Songs · Autumn Offering to the Altar of Grain", "祖道賦詩": "Composed at the Farewell Sacrifice by the Road", "神仙篇": "The Immortals", "神州歌·諴夏": "Song of the Divine Land · Xianxia", "祠洛水歌": "Song of Sacrifice to the Luo River", "禅暇詩": "In Leisure from Meditation", "秋日贈王中舍詩": "autumndaypresented toWang Zhongsheng Poem", "秋日遊昆明池詩": "autumndayvisitingKunming Pool Poem", "秋池一株蓮詩": "A Single Lotus in the Autumn Pool", "秋遊昆明池詩": "autumnvisitingKunming Pool Poem", "答楊世子詩": "Answering the Heir of Yang", "答江學士協詩": "Answering Academician Jiang Xie", "答賀屬詩": "Answering He's Retainer", "紀遼東二首": "Recording Liaodong, Two Poems", "美女篇": "The Beautiful Woman", "聯句作詩": "Linked Verses", "聽百舌鳥詩": "Listening to the shrikebirds", "聽鳴蟬篇": "Listening to the Cicadas", "臨渭源詩": "By the Source of the Wei", "臨終詩": "On the Verge of Death", "臨終詩二首·哀速終": "On the Verge of Death, Two Poems · Lamenting a Hasty End", "臨終詩二首·悲永殡": "On the Verge of Death, Two Poems · Mourning the Long Repose", "自感詩三首": "Feelings, Three Poems", "自遣詩": "Consoling Myself", "與胡師耽同系胡州出被刑獄中詩": "Imprisoned with Master Hu in Huzhou", "舍利佛": "Sarira Buddha", "舍舟登陸示慧日道場玉清玄壇德衆詩": "Leaving the Boat to Show the Congregation of Huiri and Yuqing", "芙蓉花": "The Lotus", "英才言聚賦得昇天行詩": "Gathering of Talents: Set Topic 'Ascending to Heaven'", "葛玄空中歌三首": "Ge Xuan's Songs from Midair, Three Songs", "蜀國弦": "The Shu Strings", "行經太華詩": "Passing by Mount Hua", "行經漢高陵詩": "Passing by the Gaoling Tomb of Han", "行經舊國詩": "Passing by the old capital", "衛羅國王女配英靈鳳歌": "The Wei Luo Princess's Phoenix Song", "衡陽王齋閣奏妓詩": "Entertainers Perform in the Hengyang Prince's Studio", "西園遊上才": "Fine Talent Strolls the West Garden", "觀太常奏新樂詩": "Watching the New Music at the Court of Ceremonials", "言反江陽寓目灞涘贈易州陸司馬詩": "Returning Past Jiangyang and Ba, Presented to Marshal Lu of Yizhou", "言離廣府還望桂林去留怆然自述贈懷詩": "Leaving Guangzhou, Gazing Back at Guilin, Mixed Feelings", "詠修竹詩": "On Cultivated Bamboo", "詠同心芙蓉詩": "On Twin Lotus Hearts", "詠山詩": "On the Mountain", "詠松樹詩": "On the Pines", "詠桐詩": "On the Paulownia", "詠死烏詩": "On a Dead Crow", "詠死牛詩": "On a Dead Ox", "詠灰詩": "On Ashes", "詠石榴詩": "On the Pomegranate", "詠苔紙詩": "On Moss Paper", "詠階前萱草詩": "On the Daylilies by the Steps", "詠魚詩": "On Fish", "詠鵲詩": "On the Magpie", "詠鷹詩": "On the Hawk", "諴夏": "Xianxia", "譚公府中爲裴鏡民語": "Saying of Lord Tan's Household on Pei Jingmin", "谒方山靈岩寺詩": "Visiting Lingyan Monastery on Mount Fang", "豫章行": "Song of Yuzhang", "賜史祥詩": "bestowed onShi Xiang Poem", "賜牛弘詩": "bestowed onNiu Hong Poem", "賜諸葛穎": "bestowed onZhuge Ying", "賦得岩穴無結構詩": "Set Topic: A Cave Without Structure", "賦得微雨東來應教詩": "Set Topic: Fine Rain from the East", "賦得戲燕俱宿詩": "Set Topic: Playful Swallows Roosting Together", "賦得方塘含白水詩": "Set Topic: A Square Pond Holding Clear Water", "賦得涉江采芙蓉詩": "Set Topic: Crossing the River to Gather Lotus", "賦得珠簾詩": "Set Topic: The Pearl Blind", "賦得石詩": "Set Topic: Stone", "賦得笛詩": "Set Topic: The Flute", "賦得臨階危石詩": "Set Topic: The Precarious Rock by the Steps", "賦得華亭鶴詩": "Set Topic: The Crane of Huating", "賦得鏡詩": "Set Topic: The Mirror", "賦得雁送別周員外戍嶺表詩": "Set Topic: Geese — Farewell to Zhou Bound for Lingbiao", "賦得馬援詩": "Set Topic: Ma Yuan", "賦得高柳鳴蟬詩": "Set Topic: Cicadas in the Tall Willows", "賦昆明池一物得織女石詩": "On an Object of Kunming Pool: the Weaving Girl's Stone", "贈別司馬幼之南聘詩": "Presented to Sima Youzhi on His Southern Mission", "贈劉儀同西聘詩": "Presented to Liu Yitong on His Western Mission", "贈情人詩": "For My Love", "贈李若詩": "Presented to Li Ruo", "贈李行之": "Presented to Li Xingzhi", "贈窦蔡二記室入蜀詩": "Presented to Recorders Dou and Cai Entering Shu", "贈薛内史詩": "Presented to Secretary Xue", "贈薛播州詩（十四章）": "Presented to Xue of Bozhou, Fourteen Poems", "追從銮輿夕頓戲下應令詩": "Following the Imperial Carriage to Its Evening Stop, by Princely Command", "送別秦王學士江益詩": "Farewell to Parting with the Qin Prince's AcademicianJiang Yi", "送別詩": "Seeing Someone Off", "送劉員外同賦陳思王詩得好鳥鳴高枝詩": "Farewell to Liu, Composing on Chen Siwang's 'Fine Birds Sing in High Branches'", "送晉熙公別詩": "Farewell to Duke of Jinxiparting with", "送舍利宿定晉岩詩": "Escorting the Sarira to Rest at Dingjin Cliff", "送蔡君知-入蜀詩二首": "Farewell to Cai Junzhi Entering Shu, Two Poems", "遊三學山詩": "Visiting Sanxue Mountain", "遊明慶寺詩": "Visiting Mingqing Monastery", "遊梁城詩": "Visiting Liangthe city", "過故宅詩": "Passing the old residence", "過故邺詩": "Passing old Ye", "遠戍江南 (寄京邑親友)": "Garrisoned in Jiangnan (Sent to Kin in the Capital)", "選人爲辛亶歌": "Song of the Candidates for Xin Dan", "遺于仲文詩": "Left for Yu Zhongwen", "遺源雄詩": "Left for Yuan Xiong", "還京師詩": "Returning to the Capital", "邺下爲釋靈裕語": "Yexia Saying on Monk Lingyu", "酬蕭侍中春園聽妓詩": "Replying to Chamberlain Xiao's 'Listening to the Entertainers in the Spring Garden'", "酬陸常侍詩": "Replying to Attendant Lu", "采蓮曲": "Lotus-Gathering Song", "重酬楊仆射山亭詩": "Replying Again to Vice-Director Yang on the Mountain Kiosk", "野望": "A View from the Wilds", "釣竿篇": "The Fishing Rod", "錦石搗流黃二首": "Beating Cloth at Brocade Rock, Two Poems", "長孫平引鄙諺": "A Vulgar Saying Cited by Zhangsun Ping", "長安爲崔弘度屈突蓋語": "Chang'an Saying on Cui Hongdu and Qutu Gai", "長安道": "The Road to Chang'an", "長白山歌": "Song of Changbai Mountain", "門有車馬客行": "A Guest with Carriage at the Gate", "閨思詩": "Boudoir Longing", "陌上桑": "Mulberries by the Path", "陰長生遺世四言詩（三章）": "Yin Changsheng's Four-Character Poem on Leaving the World (Three Parts)", "陽春曲": "Song of Warm Spring", "陽春歌": "Song of Warm Spring", "隋圖經引俗諺": "A Common Proverb Cited in the Sui Geography", "隋末江東童謠": "Jiangdong Children's Rhyme of the Late Sui", "雜言詩": "Mixed-Line Poem", "雞鳴篇": "The Cock's Crow", "雨晴詩": "Clearing After Rain", "雩祭歌·諴夏": "Rain Sacrifice Song · Xianxia", "雲中受突厥主朝宴席賦詩": "Composed at the Banquet for the Tujue Qaghan at Yunzhong", "零落桐詩": "The Fallen Paulownia", "霹靂引": "The Thunderbolt Prelude", "項王歌": "Song of King Xiang", "食舉歌（八曲）": "Mealtime Songs (Eight Pieces)", "飲馬長城窟行": "Watering Horses at a Long Wall Spring", "馬明生臨去箸詩三首": "Ma Mingsheng's Departing Verses, Three Poems", "駕出圜丘詩": "On the Imperial Procession to the Circular Mound", "骢馬": "The Piebald Horse", "鳳艒歌": "Song of the Phoenix Boat", "黃門倡歌": "Song of the Palace Attendants"}, "authors_en": {"楊堅（隋文帝）": "Emperor Wen of Sui (Yang Jian)", "楊廣（隋煬帝）": "Emperor Yang of Sui (Yang Guang)", "盧思道": "Lu Sidao", "薛道衡": "Xue Daoheng", "楊素": "Yang Su", "虞世基": "Yu Shiji", "虞世南": "Yu Shinan", "李德林": "Li Delin", "王胄": "Wang Zhou", "諸葛穎": "Zhuge Ying", "孫萬壽": "Sun Wanshou", "姚察": "Yao Cha", "許善心": "Xu Shanxin", "虞綽": "Yu Chuo", "庾自直": "Yu Zizhi", "薛德音": "Xue Deyin", "蔡允恭": "Cai Yungong", "孔德紹": "Kong Deshao", "劉斌": "Liu Bin", "李密": "Li Mi", "大義公主": "Princess Dayi", "乙支文德": "Eulji Mundeok", "侯夫人": "Lady Hou", "無名氏": "Anonymous", "李孝貞": "Li Xiaozhen", "辛德源": "Xin Deyuan", "魏澹": "Wei Dan", "何妥": "He Tuo", "尹式": "Yin Shi", "明克讓": "Ming Kerang", "柳莊": "Liu Zhuang", "王通": "Wang Tong", "劉臻": "Liu Zhen", "史萬歲": "Shi Wansui", "崔仲方": "Cui Zhongfang", "于仲文": "Yu Zhongwen", "牛弘": "Niu Hong", "蕭琮": "Xiao Cong", "崔賾": "Cui Ze", "王由禮": "Wang Youli", "釋慧淨": "Monk Huijing", "釋智炫": "Monk Zhixuan", "釋玄逵": "Monk Xuankui", "釋靈裕": "Monk Lingyu", "釋智命": "Monk Zhiming", "釋智才": "Monk Zhicai", "曇延": "Tanyan", "沸大": "Feida", "釋慧輪": "Monk Huilun", "釋慧英": "Monk Huiying", "無名釋": "Anonymous Monks", "柳𧦬": "Liu Bian", "弘執恭": "Hong Zhigong", "李巨仁": "Li Juren", "明餘慶": "Ming Yuqing", "元行恭": "Yuan Xinggong", "蕭岑": "Xiao Cen", "李行之": "Li Xingzhi", "徐儀": "Xu Yi", "岑德潤": "Cen Derun", "王昚": "Wang Shen", "袁慶": "Yuan Qing", "賀若弼": "Heruo Bi", "杜公瞻": "Du Gongzhan", "王衡": "Wang Heng", "柳彧": "Liu Yu", "陸法言": "Lu Fayan", "劉焯": "Liu Zhuo", "劉炫": "Liu Xuan", "王劭": "Wang Shao", "韋世康": "Wei Shikang", "蘇威": "Su Wei", "宇文愷": "Yuwen Kai", "蕭吉": "Xiao Ji", "智顗": "Zhiyi", "釋彥琮": "Monk Yancong", "吉藏": "Jizang", "李播": "Li Bo", "蕭皇后": "Empress Xiao", "廢太子勇": "Deposed Crown Prince Yong", "秦王俊": "Prince Jun of Qin", "蜀王秀": "Prince Xiu of Shu", "漢王諒": "Prince Liang of Han", "觀王雄": "Prince Xiong of Guan", "齊王暕": "Prince Jian of Qi", "恭帝": "Emperor Gong", "突厥啟民可汗": "Qimin Qaghan of the Tujue", "釋僧肇": "Monk Sengzhao", "僧法宣": "Monk Faxuan", "釋道安": "Monk Dao'an", "支遁": "Zhidun", "戴逵": "Dai Kui", "王羲之": "Wang Xizhi", "謝靈運": "Xie Lingyun", "謝朓": "Xie Tiao", "沈約": "Shen Yue", "江淹": "Jiang Yan", "吳均": "Wu Jun", "劉繪": "Liu Hui", "徐陵": "Xu Ling", "庾信": "Yu Xin", "江總": "Jiang Zong", "顏之推": "Yan Zhitui", "郭璞": "Guo Pu", "王喬之": "Wang Qiaozhi", "陶淵明": "Tao Yuanming", "漁父": "the Fisherman", "陸雲公": "Lu Yungong", "劉峻": "Liu Jun", "慧皎": "Huijiao", "釋寶貴": "Monk Baogui", "孔紹安": "Kong Shao'an", "魯範": "Lu Fan", "劉夢予": "Liu Mengyu", "王謨": "Wang Mo", "丁六娘": "Ding Liuniang", "李月素": "Li Yuesu", "羅愛愛": "Luo Ai'ai", "秦玉鸞": "Qin Yuluan", "蘇蟬翼": "Su Chanyi", "張碧蘭": "Zhang Bilan", "慧曉": "Huixiao", "釋曇延": "Monk Tanyan", "葛玄": "Ge Xuan", "太真夫人": "Lady Taizhen", "馬明生": "Ma Mingsheng", "陰長生": "Yin Changsheng", "李仙君": "Immortal Lord Li", "武夷君": "the Lord of Wuyi", "張麗英": "Zhang Liying", "衛羅國王女": "the Wei Luo Princess"}, "sites": [{"cat_zh": "一、全文阅读（现代录入）", "cat_en": "I. Full texts (modern transcriptions)", "items": [["维基文库《全隋诗》", "Wikisource, Quan Sui shi", "https://zh.wikisource.org/wiki/全隋诗", "十卷全本", "all ten juan"], ["搜韵 · 诗文索引（隋）", "Sou-yun, poem index (Sui)", "https://sou-yun.cn/PoemIndex.aspx?dynasty=Sui", "130+ 作者", "130+ authors"], ["古诗句网 · 隋代", "Gushiju.net · Sui", "http://gushiju.net/shici/chaodai-隋代/p-1", "2399 首", "2,399 items"], ["古文岛（原古诗文网）", "Guwendao.net (formerly gushiwen.org)", "https://www.guwendao.net/shiwens/default.aspx?cstr=隋代", "选本", "selection"], ["汉典诗词 · 隋", "Zdic Poetry · Sui", "https://sc.zdic.net/shiren/sui/", "数人", "a few authors"], ["中华文库《全隋诗》", "Zhonghuashu mirror", "https://zhonghuashu.com/wiki/全隋诗", "十卷（镜像）", "ten juan (mirror)"]]}, {"cat_zh": "二、古籍影印与 OCR", "cat_en": "II. Facsimiles and OCR", "items": [["识典古籍《诗纪》隋卷", "Shidian Guji: Shiji (Sui juan)", "https://www.shidianguji.com/zh/book/NA13731", "隋诗二卷", "two juan"], ["识典古籍《全隋文》", "Shidian Guji: Quan Sui wen", "https://www.shidianguji.com/zh/mid-page/7589774970391019558", "隋文", "Sui prose"], ["维基共享资源《全隋詩》影像", "Wikimedia Commons (1916 print)", "https://commons.wikimedia.org/wiki/File:SSID-12344335_全隋詩_卷1-4.pdf", "前四卷", "first four juan"], ["中国哲学书电子化计划《全隋文》", "ctext.org, Quan Sui wen", "https://ctext.org/wiki.pl?if=gb&chapter=411101", "隋文", "Sui prose"], ["中国国家图书馆 · 中华古籍资源库", "NLC Ancient Books", "http://read.nlc.cn/", "馆藏", "holdings"], ["中华古籍智慧化服务平台", "NLC Guji Platform", "https://guji.nlc.cn/", "馆藏", "holdings"], ["书格《全上古三代秦汉三国六朝文》", "Shuge.org (Yan Kejun's collection)", "https://www.shuge.org/meet/topic/31779/", "隋文", "Sui prose"]]}, {"cat_zh": "三、检索工具", "cat_en": "III. Search tools", "items": [["国学宝典", "Guoxue Baodian", "https://www.gxbd.com/", "集部总集", "collectanea"]]}, {"cat_zh": "四、版本参考", "cat_en": "IV. Bibliographical reference", "items": [["国学网《全隋诗》提要", "Guoxue.com abstract", "http://guoxue.com/tangyanjiu/stwd/001.htm", "提要", "abstract"]]}], "route_km": [{"name_zh": "大興（長安）", "name_en": "Daxing (Chang'an)", "seg": 0.0, "total": 0.0}, {"name_zh": "洛陽／東都", "name_en": "Luoyang / Eastern Capital", "seg": 331.8, "total": 331.8}, {"name_zh": "隋堤／汴水", "name_en": "Sui Embankment / Bianshui", "seg": 166.0, "total": 497.8}, {"name_zh": "淮水", "name_en": "Huai River", "seg": 363.2, "total": 861.0}, {"name_zh": "江都／揚州", "name_en": "Jiangdu / Yangzhou", "seg": 186.4, "total": 1047.4}], "pairs_km": [["長安—洛陽", "Chang'an–Luoyang", 331.8], ["長安—江都", "Chang'an–Jiangdu", 997.4], ["洛陽—江都", "Luoyang–Jiangdu", 684.8], ["塞外—玉門", "Saiwai–Yumen", 1241.7], ["遼東—長安", "Liaodong–Chang'an", 1621.0]]};
+const MAP_PATH='M110,240 L210,185 L320,120 L430,95 L520,115 L635,82 L755,105 L825,150 L848,225 L830,300 L792,332 L760,398 L800,462 L770,540 L722,600 L642,622 L562,602 L502,640 L462,700 L382,722 L322,682 L282,622 L300,542 L262,472 L202,442 L162,362 L100,302 Z';
+let selPlace=null;
+function ptEN(pair){
+  if(LANG==='zh') return pair[0];
+  const m=pair[0].match(/^(.*?)《(.*?)》$/);
+  if(m){
+    const au=(D.authors_en&&D.authors_en[m[1]])||m[1];
+    const en=D.titles_en[m[2]]||m[2];
+    return au+' \u201c'+en+'\u201d';
+  }
+  return pair[0];
+}
+function placeById(id){ return D.places.find(p=>p.id===id); }
+function lonlat(lon,lat){ return [70+(lon-88)/(128-88)*960, 750-(lat-19)/(48-19)*680]; }
+function polyPath(coords){
+  return coords.map((c,i)=>(i?'L':'M')+lonlat(c[0],c[1]).join(' ')).join(' ')+' Z';
+}
+const SUI_BOUND=[
+ [94.0,40.6],[96.5,40.2],[99.5,39.2],[102.5,37.8],[104.2,37.0],[105.8,36.4],
+ [106.8,37.0],[107.4,38.6],[108.6,40.2],[110.5,41.0],[112.0,41.4],[114.0,41.6],
+ [116.0,42.2],[118.5,42.0],[120.2,41.0],[121.6,40.9],[123.0,40.5],[124.3,39.9],[122.2,39.0],[121.4,38.2],[119.0,37.6],
+ [120.6,36.2],[121.0,34.6],[121.6,32.4],[121.4,30.6],[120.2,28.4],[118.8,26.2],
+ [116.8,23.8],[114.2,22.6],[112.0,21.6],[110.2,21.4],[109.2,22.8],[108.0,24.2],
+ [106.4,25.4],[104.0,26.8],[102.4,28.8],[101.6,30.8],[101.8,33.0],[103.2,34.6],
+ [103.0,36.0],[101.6,37.2],[99.0,38.2],[96.2,39.0],[94.0,39.8]
+];
+const PROV_LINES=[
+ [[110.4,41.0],[110.2,38.0],[111.2,35.2]],
+ [[112.0,41.4],[113.2,39.0],[114.6,37.0],[116.2,35.2]],
+ [[116.2,42.0],[117.4,39.4],[118.6,37.2]],
+ [[114.6,37.0],[114.0,35.2],[114.6,33.6]],
+ [[114.6,33.6],[116.8,33.4],[118.8,33.2]],
+ [[106.2,34.4],[105.2,32.6],[105.8,30.4]],
+ [[107.6,30.8],[110.0,30.2],[112.2,29.8]],
+ [[112.2,29.8],[114.2,29.2],[116.2,29.6],[118.4,30.0]]
+];
+const PROV_LABELS=[
+ ["雍州","Yongzhou",[107.6,35.6]],
+ ["冀州","Jizhou",[113.8,39.2]],
+ ["青州","Qingzhou",[118.9,36.6]],
+ ["徐州","Xuzhou",[117.6,34.2]],
+ ["豫州","Yuzhou",[113.8,33.2]],
+ ["梁州","Liangzhou",[105.4,31.4]],
+ ["荆州","Jingzhou",[111.4,30.0]],
+ ["扬州","Yangzhou",[118.6,31.0]]
+];
+const RIVERS=[
+ [[96,35.2],[100,35.6],[103,36.2],[104.6,37.4],[106.6,38.8],[109.5,40.6],[110.8,40.2],[110.6,37.2],[111.0,35.0],[112.2,34.8],[114.0,35.0],[116.0,36.0],[118.2,37.4],[119.2,37.7]],
+ [[96.5,33.2],[99.5,31.2],[102.8,30.2],[104.2,29.2],[107.2,30.2],[110.2,30.6],[112.4,30.4],[115.0,30.8],[117.6,31.8],[119.6,32.2],[121.2,31.9]],
+ [[113.0,33.6],[115.8,33.0],[118.2,33.2],[120.2,33.9]],
+ [[104.0,35.0],[106.2,34.5],[108.4,34.3],[110.2,34.6]]
+];
+const POWERS=[
+ ["Eastern Turks","东突厥",[108.5,44.6]],
+ ["Tuyuhun","吐谷浑",[98.5,36.6]],
+ ["Goguryeo","高句丽",[125.6,42.0]],
+ ["Silla","新罗",[128.8,36.2]],
+ ["Baekje","百济",[126.8,35.4]],
+ ["Khitan","契丹",[120.0,43.6]],
+ ["Xi","奚",[118.6,42.8]],
+ ["Mohe","靺鞨",[128.4,44.4]],
+ ["Shiwei","室韦",[122.4,46.6]]
+];
+let LAYERS={sui:true,borders:true,rivers:true,powers:true};
+function toggleLayer(k,btn){
+  LAYERS[k]=!LAYERS[k];
+  if(btn) btn.classList.toggle('on');
+  renderMap();
+}
+function baseLayers(proj, scalePx){
+  proj = proj || lonlat;
+  scalePx = scalePx || 60;
+  let s='';
+  s+='<rect x="0" y="0" width="1100" height="820" fill="#e9f2f7"></rect>';
+  s+='<rect x="30" y="26" width="1040" height="760" fill="#f6f1e6" opacity="0.55"></rect>';
+  if(LAYERS.sui) s+='<path d="'+polyPath(SUI_BOUND)+'" fill="#d9b38c" stroke="#8a5a3a" stroke-width="2"></path>';
+  if(LAYERS.borders){
+    PROV_LINES.forEach(line=>{
+      s+='<path d="'+line.map((c,i)=>(i?'L':'M')+proj(c[0],c[1]).join(' ')).join(' ')+'" fill="none" stroke="#7a4a2a" stroke-width="1.3" stroke-dasharray="6 4"></path>';
+    });
+    PROV_LABELS.forEach(p=>{
+      const q=proj(p[2][0],p[2][1]);
+      s+='<text x="'+q[0]+'" y="'+q[1]+'" font-size="13" fill="#5a3a22" text-anchor="middle" font-weight="bold">'+(LANG==='zh'?p[0]:p[1])+'</text>';
+    });
+  }
+  if(LAYERS.rivers){
+    RIVERS.forEach(line=>{
+      s+='<path d="'+line.map((c,i)=>(i?'L':'M')+proj(c[0],c[1]).join(' ')).join(' ')+'" fill="none" stroke="#5b8db8" stroke-width="2"></path>';
+    });
+  }
+  if(LAYERS.powers){
+    POWERS.forEach(p=>{
+      const q=proj(p[2][0],p[2][1]);
+      s+='<text x="'+q[0]+'" y="'+q[1]+'" font-size="12" fill="#8a6a3a" text-anchor="middle" font-style="italic">'+(LANG==='zh'?p[1]:p[0])+'</text>';
+    });
+  }
+  s+='<text x="980" y="760" font-size="12" fill="#7a9ab0">East China Sea</text>';
+  s+='<text x="120" y="760" font-size="12" fill="#7a9ab0">South China Sea</text>';
+  // scale bar: 200 km at ~35N => 2.27 deg lon
+  s+='<g transform="translate(70,780)"><line x1="0" y1="0" x2="'+scalePx+'" y2="0" stroke="#1f1f1f" stroke-width="3"></line><line x1="0" y1="-4" x2="0" y2="4" stroke="#1f1f1f" stroke-width="2"></line><line x1="'+scalePx+'" y1="-4" x2="'+scalePx+'" y2="4" stroke="#1f1f1f" stroke-width="2"></line><text x="0" y="-8" font-size="10" fill="#1f1f1f">0</text><text x="'+(scalePx-18)+'" y="-8" font-size="11" fill="#1f1f1f">200 km</text></g>';
+  return s;
+}
+const Z={map:{s:1,x:0,y:0}, route:{s:1,x:0,y:0}};
+function applyZoom(which){
+  const el=document.getElementById(which+'Zoom'); if(!el) return;
+  const st=Z[which];
+  el.style.transform='translate('+st.x+'px,'+st.y+'px) scale('+st.s+')';
+}
+function zoomBy(which,f){
+  const st=Z[which]; st.s=Math.max(0.6,Math.min(4,st.s*f)); applyZoom(which);
+}
+function zoomReset(which){ Z[which]={s:1,x:0,y:0}; applyZoom(which); }
+function bindZoom(which){
+  const stage=document.getElementById(which+'Stage'); if(!stage) return;
+  let drag=null;
+  stage.addEventListener('wheel',e=>{
+    e.preventDefault();
+    const st=Z[which]; const r=stage.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    const f=e.deltaY<0?1.12:0.89;
+    const ns=Math.max(0.6,Math.min(4,st.s*f));
+    st.x=mx-(mx-st.x)*(ns/st.s);
+    st.y=my-(my-st.y)*(ns/st.s);
+    st.s=ns; applyZoom(which);
+  },{passive:false});
+  stage.addEventListener('pointerdown',e=>{
+    if(e.target.closest && e.target.closest('circle[data-id]')) return;
+    const st=Z[which]; drag={x:e.clientX,y:e.clientY,ox:st.x,oy:st.y};
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener('click',e=>{
+    const c=e.target.closest && e.target.closest('circle[data-id]');
+    if(c) showPlace(c.getAttribute('data-id'));
+  });
+  stage.addEventListener('pointermove',e=>{
+    if(!drag) return;
+    const st=Z[which];
+    st.x=drag.ox+(e.clientX-drag.x);
+    st.y=drag.oy+(e.clientY-drag.y);
+    applyZoom(which);
+  });
+  stage.addEventListener('pointerup',()=>{drag=null;});
+  stage.addEventListener('pointercancel',()=>{drag=null;});
+  stage.addEventListener('dblclick',()=>zoomBy(which,1.25));
+  applyZoom(which);
+}
+function renderMap(){
+  const W=1100,H=820;
+  let svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">';
+  svg+=baseLayers();
+  const LOFF={changan:[-16,-10],luoyang:[16,-8],bingzhou:[-10,-8],huai:[0,15],jiangdu:[0,-12],
+    weiyuan:[-12,-8],yunzhong:[14,-8],hanhai:[0,-12],jiaohe:[14,2],shu:[-14,-6],
+    guilin:[14,2],hengyang:[0,14],longtou:[-16,6],saiwai:[0,-9],tujue:[0,-10]};
+  D.places.forEach(p=>{
+    const ov=OVERLAY.places&&OVERLAY.places[p.id]||{};
+    const name=ov.name||(LANG==='zh'?p.zh:p.en);
+    const r=Math.min(16, 4+3.4*Math.sqrt(p.poems.length));
+    const col=p.id==='jiangdu'?'#9e2b25':'#d98a5f';
+    const off=LOFF[p.id]||[0,0];
+    svg+='<circle data-id="'+p.id+'" cx="'+p.x+'" cy="'+p.y+'" r="'+r+'" fill="'+col+'" stroke="#fff" stroke-width="2" style="cursor:pointer"><title>'+esc(name)+'（'+p.poems.length+'）</title></circle>';
+    svg+='<text x="'+(p.x+off[0])+'" y="'+(p.y-r-5+off[1])+'" font-size="11.5" fill="#1f1f1f" text-anchor="middle" style="paint-order:stroke;stroke:#f6f1e6;stroke-width:3;">'+esc(name)+'</text>';
+  });
+  svg+='</svg>';
+  document.getElementById('mapSvg').innerHTML=svg;
+}
+
+function showPlace(id){
+  selPlace=id; const p=placeById(id);
+  const ov=OVERLAY.places&&OVERLAY.places[p.id]||{};
+  const name=ov.name||(LANG==='zh'?p.zh:p.en);
+  const note=ov.note!==undefined?ov.note:p.note;
+  let hits=p.hits||[];
+  if(!hits.length && p.poems){
+    hits=p.poems.map(x=>({author:'',en_author:'',title:x[0],en_title:x[0],line:x[1],text:x[1]}));
+  }
+  const box=document.getElementById('placePanel');
+  let html='<h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;">'+esc(name)+'</h3>'+
+   '<div style="font-size:12px;color:#5a5a5a;margin:4px 0 8px;">'+esc(note)+'</div>'+
+   '<div style="font-size:12px;color:#9e2b25;margin-bottom:6px;">'+(LANG==='zh'?'共 ':'')+hits.length+(LANG==='zh'?' 条相关诗句':' related lines')+'</div>'+
+   '<a class="morelink" href="place/'+p.id+'.html">'+(LANG==='zh'?'查看全部诗文':'View all poems & prose')+'（'+hits.length+' 首 / '+(p.prose_count||0)+' 篇）→</a>';
+  hits.forEach(h=>{
+    const au=LANG==='zh'?h.author:(h.en_author||h.author);
+    const ti=LANG==='zh'?h.title:(h.en_title||h.title);
+    html+='<div class="hit"><div class="ht">'+esc(au)+'《'+esc(ti)+'》</div>'+
+      '<div class="hl">“'+esc(h.line)+'”</div>'+
+      '<details><summary>'+(LANG==='zh'?'全文':'Full text')+'</summary><div class="full">'+esc(h.text)+'</div></details></div>';
+  });
+  html+=(EDIT?'<button style="margin-top:6px;" onclick="editPlaceNote(\''+p.id+'\')">'+t('edit_place')+'</button>':'');
+  box.innerHTML=html;
+}
+function editPlaceNote(id){
+  const cur=OVERLAY.places&&OVERLAY.places[id]&&OVERLAY.places[id].note!==undefined?OVERLAY.places[id].note:placeById(id).note;
+  const v=prompt(t('edit_place'),cur);
+  if(v!==null){ if(!OVERLAY.places)OVERLAY.places={}; if(!OVERLAY.places[id])OVERLAY.places[id]={}; OVERLAY.places[id].note=v; showPlace(id); }
+}
+/* route animation */
+let anim=null, prog=0, ROUTE_SPEED=0.005;
+function setSpeed(v,btn){
+  ROUTE_SPEED=v;
+  document.querySelectorAll('.routebox button.spd').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+}
+function routeProject(){
+  const ids=['changan','luoyang','suiwei','huai','jiangdu'];
+  const lls=ids.map(id=>placeById(id).ll);
+  const lons=lls.map(x=>x[0]), lats=lls.map(x=>x[1]);
+  const pad=1.0;
+  const minLon=Math.min(...lons)-pad, maxLon=Math.max(...lons)+pad;
+  const minLat=Math.min(...lats)-pad, maxLat=Math.max(...lats)+pad;
+  const W=1100,H=820,margin=110;
+  const sc=Math.min((W-2*margin)/(maxLon-minLon),(H-2*margin)/(maxLat-minLat));
+  const ox=(W-(maxLon-minLon)*sc)/2, oy=(H-(maxLat-minLat)*sc)/2;
+  const proj=(lon,lat)=>[ox+(lon-minLon)*sc, oy+(maxLat-lat)*sc];
+  proj.scalePx=Math.round(2.27*sc);
+  return proj;
+}
+function routePts(){
+  const proj=routeProject();
+  return ['changan','luoyang','suiwei','huai','jiangdu'].map(id=>proj(...placeById(id).ll));
+}
+function renderRoute(){
+  const W=1100,H=820; const proj=routeProject(); const pts=routePts();
+  let svg='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">';
+  svg+=baseLayers(proj, proj.scalePx);
+  const line=pts.map((p,i)=>(i===0?'M':'L')+p[0]+' '+p[1]).join(' ');
+  svg+='<path d="'+line+'" fill="none" stroke="#9e2b25" stroke-width="3" stroke-dasharray="8 6"></path>';
+  D.route.forEach((st,i)=>{
+    const p=pts[i];
+    svg+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="#9e2b25" stroke="#fff"><title>'+esc(st.poem)+'</title></circle>';
+    svg+='<text x="'+p[0]+'" y="'+(p[1]-14)+'" font-size="12" fill="#1f1f1f" text-anchor="middle" style="paint-order:stroke;stroke:#f6f1e6;stroke-width:3;">'+(i+1)+'. '+esc(LANG==='zh'?st.zh:st.en)+'</text>';
+    const km=D.route_km[i];
+    if(km && km.seg>0){
+      const prev=pts[i-1];
+      svg+='<text x="'+((p[0]+prev[0])/2)+'" y="'+((p[1]+prev[1])/2-6)+'" font-size="11" fill="#5a5a5a" text-anchor="middle" style="paint-order:stroke;stroke:#f6f1e6;stroke-width:3;">'+km.seg+' km</text>';
+    }
+  });
+  svg+='<text x="560" y="800" font-size="13" fill="#9e2b25" text-anchor="middle">'+t('routeTotal')+' ≈ '+D.route_km[D.route_km.length-1].total+' km</text>';
+  svg+='<circle id="bus" cx="'+pts[0][0]+'" cy="'+pts[0][1]+'" r="7" fill="#b08d57" stroke="#fff" stroke-width="2"></circle>';
+  svg+='</svg>';
+  document.getElementById('routeSvg').innerHTML=svg;
+}
+
+function toggleRoute(){
+  const btn=document.getElementById('playBtn');
+  if(anim){ clearInterval(anim); anim=null; btn.innerHTML='▶ <span>'+t('play')+'</span>'; return; }
+  btn.innerHTML='⏸ <span>'+t('pause')+'</span>';
+  prog=0;
+  anim=setInterval(()=>{
+    prog+=ROUTE_SPEED; if(prog>1) prog=0;
+    const pts=routePts(); const seg=pts.length-1; const f=prog*seg; const i=Math.floor(f); const frac=f-i;
+    const a=pts[Math.min(i,seg)], b=pts[Math.min(i+1,seg)];
+    const x=a[0]+(b[0]-a[0])*frac, y=a[1]+(b[1]-a[1])*frac;
+    const bus=document.getElementById('bus'); if(bus){ bus.setAttribute('cx',x); bus.setAttribute('cy',y); }
+    const st=D.route[Math.min(i,seg)];
+    document.getElementById('routeNote').textContent=st.poem;
+  },60);
+}
+function renderDensity(){
+  const box=document.getElementById('denBox'); box.innerHTML='';
+  const max=Math.max(...D.places.map(p=>p.poems.length));
+  D.places.slice().sort((a,b)=>b.poems.length-a.poems.length).forEach(p=>{
+    const ov=OVERLAY.places&&OVERLAY.places[p.id]||{};
+    const name=ov.name||(LANG==='zh'?p.zh:p.en);
+    const row=document.createElement('div'); row.className='den-row';
+    row.innerHTML='<div class="lbl">'+esc(name)+'</div><div class="den-track"><div class="den-fill" style="width:'+Math.round(p.poems.length/max*100)+'%;"></div></div><div class="den-n">'+p.poems.length+'</div>';
+    box.appendChild(row);
+  });
+}
+function renderTour(){
+  const box=document.getElementById('tourCards'); box.innerHTML='';
+  D.places.filter(p=>p.id==='jiangdu').forEach(p=>{
+    p.poems.forEach(po=>{
+      const div=document.createElement('div'); div.className='card pcard';
+      div.innerHTML='<h3>'+esc(ptEN(po))+'</h3><div class="poem">'+esc(po[1])+'</div>';
+      box.appendChild(div);
+    });
+  });
+  // second capital close reading
+  const caps=[
+   ["“扬州旧处可淹留，台榭高明复好游”","江都宫乐歌开头：扬州被写成可驻留的“旧处”，台榭之盛等同帝都。"],
+   ["“舳舻千里泛归舟，言旋旧镇下扬州”","泛龙舟把南巡写成“归”；“旧镇”一词把江都放进行在谱系。"],
+   ["“东都礼仪举，西京冠盖归”","还京师诗并置东都/西京：两京制的诗语在巡幸中成形。"],
+   ["“巡游光帝典，征吉乃先天”","虞世基奉和：应诏诗把巡幸转写为帝典，江都由此进入朝廷话语。"],
+  ];
+  const cb=document.getElementById('capCards'); cb.innerHTML='';
+  caps.forEach(c=>{
+    const div=document.createElement('div'); div.className='card'; div.style.borderTopColor='#9e2b25';
+    div.innerHTML='<div style="font-family:Kaiti SC,serif;color:#9e2b25;">'+c[0]+'</div><p style="font-size:13px;margin-top:6px;">'+c[1]+'</p>';
+    cb.appendChild(div);
+  });
+}
+function renderWorkflow(){
+  const box=document.getElementById('wBox'); box.innerHTML='';
+  ['w1','w2','w3','w4','w5','w6'].forEach((k,i)=>{
+    const div=document.createElement('div');
+    div.innerHTML='<b style="color:#9e2b25;">'+(i+1)+'.</b> <span>'+t(k)+'</span>';
+    box.appendChild(div);
+  });
+}
+function renderDist(){
+  const box=document.getElementById('distBox'); box.innerHTML='';
+  D.pairs_km.forEach(pr=>{
+    const row=document.createElement('div'); row.className='den-row';
+    row.innerHTML='<div class="lbl">'+esc(LANG==='zh'?pr[0]:pr[1])+'</div><div class="den-track"><div class="den-fill" style="width:'+Math.min(100,Math.round(pr[2]/12))+'%;background:#9e2b25;"></div></div><div class="den-n">'+pr[2]+'</div>';
+    box.appendChild(row);
+  });
+}
+const TUTS=[
+ ["QGIS Training Manual","QGIS 官方培训手册","https://docs.qgis.org/latest/en/docs/training_manual/"],
+ ["QGIS 中文文档","QGIS 中文培训手册","https://docs.qgis.org/latest/zh_Hans/docs/training_manual/"],
+ ["A Gentle Introduction to GIS","QGIS 简明 GIS 导论","https://docs.qgis.org/latest/en/docs/gentle_gis_introduction/"],
+ ["Natural Earth","自然地理底图数据","https://www.naturalearthdata.com/"],
+ ["CHGIS (Fudan)","中国历史地理信息系统","https://chgis.fudan.edu.cn/"],
+ ["CCTS (Academia Sinica)","中研院中华文明时空基础架构","https://ccts.sinica.edu.tw/"],
+ ["发现中国·历史地图","谭图在线参照","https://www.webdog.cn/map/"],
+ ["谭其骧《中国历史地图集》","中国地图出版社，1982（纸本）",""]
+];
+function renderTutorials(){
+  const box=document.getElementById('tutBox'); if(!box) return; box.innerHTML='';
+  TUTS.forEach(t=>{
+    const d=document.createElement('div'); d.className='sitem';
+    d.innerHTML='<b>'+esc(t[0])+'</b><span style="color:#5a5a5a;">'+esc(t[1])+'</span>'+(t[2]?'<div class="u"><a href="'+t[2]+'" target="_blank" rel="noopener">'+t[2]+'</a></div>':'');
+    box.appendChild(d);
+  });
+}
+function renderLegend(){
+  const lg=document.getElementById('mapLegend'); if(!lg) return;
+  lg.innerHTML='<span><i style="background:#d9b38c"></i>'+t('legendSui')+'</span>'+
+   '<span><i style="background:#7a4a2a"></i>'+t('legendBorder')+'</span>'+
+   '<span><i style="background:#5b8db8"></i>'+t('legendRiver')+'</span>'+
+   '<span><i style="background:#9e2b25;border-radius:50%"></i>'+t('legendCity')+'</span>'+
+   '<span><i style="background:#b08d57;border-radius:50%"></i>'+t('legendPower')+'</span>';
+}
+function renderSites(){
+  const box=document.getElementById('srcBox'); box.innerHTML='';
+  D.sites.forEach(cat=>{
+    const wrap=document.createElement('div'); wrap.style.marginBottom='16px';
+    wrap.innerHTML='<h3 style="font-family:Heiti SC,sans-serif;color:#9e2b25;">'+esc(LANG==='zh'?cat.cat_zh:cat.cat_en)+'</h3>';
+    const grid=document.createElement('div'); grid.className='sgrid';
+    cat.items.forEach(it=>{
+      const d=document.createElement('div'); d.className='sitem';
+      d.innerHTML='<b>'+esc(LANG==='zh'?it[0]:it[1])+'</b><span style="color:#5a5a5a;">'+esc(LANG==='zh'?it[3]:it[4])+'</span><div class="u">'+esc(it[2])+'</div>';
+      grid.appendChild(d);
+    });
+    wrap.appendChild(grid); box.appendChild(wrap);
+  });
+}
+function applyI18n(){ document.querySelectorAll('[data-i]').forEach(el=>{ el.textContent=t(el.dataset.i); }); }
+function renderAll(){ applyI18n(); renderMap(); renderRoute(); renderDensity(); renderTour(); renderSites(); renderWorkflow(); renderDist(); renderTutorials(); renderLegend();
+  document.getElementById('srcCap').textContent=t('srcCap');
+  document.getElementById('methodCap').textContent=t('methodCap');
+  document.getElementById('symCap').textContent=t('symCap');
+  document.getElementById('distCap').textContent=t('distCap');
+  document.getElementById('tutCap').textContent=t('tutCap');
+  document.getElementById('mapNote').textContent=t('mapNote');
+  if(selPlace) showPlace(selPlace); }
+renderAll();
+bindZoom('map'); bindZoom('route');
+fetch('/api/session',{credentials:'same-origin'}).then(r=>r.ok?r.json():null).then(d=>{ if(d&&d.edit){ EDIT=true; renderAll(); } }).catch(()=>{});
+const qp=new URLSearchParams(location.search).get('place');
+if(qp && placeById(qp)) showPlace(qp);
+loadOverlay();
+
+</script>
+</body>
+</html>
